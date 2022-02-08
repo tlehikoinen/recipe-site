@@ -1,0 +1,15 @@
+li {
+  padding: 10px;
+  margin: 10px;
+}
+
+nav li {
+  font-weight: bold;
+  display: inline-table;
+  border-style: solid;
+  border-radius: 10px;
+}
+
+nav {
+  border-style: solid;
+}

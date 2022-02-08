@@ -1,0 +1,26 @@
+{
+  "name": "projekti",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm start\"",
+    "backend_dev": "cd backend && npm run dev",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:backend": "cd backend && npm run lint",
+    "lint": "eslint backend frontend"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.17.0",
+    "@babel/preset-react": "^7.16.7",
+    "babel-eslint": "^10.1.0",
+    "concurrently": "^7.0.0"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.0"
+  }
+}

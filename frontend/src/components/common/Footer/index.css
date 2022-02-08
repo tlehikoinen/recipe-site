@@ -1,0 +1,16 @@
+.footer {
+  height:24px; 
+  width: 100%; 
+  background-image: none;
+  background-color: antiquewhite;
+  /* background-repeat: repeat;
+  background-attachment: scroll; */
+  background-position: 0% 0%;
+  position: fixed;
+  bottom: 0pt;
+  left: 0pt;
+}
+
+.footer:hover {
+  background-color: black;
+}

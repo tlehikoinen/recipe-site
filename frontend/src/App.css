@@ -1,0 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Josefin+Sans');
+
+
+body {
+  /* font-family: 'IBM Plex Sans Thai Looped', sans-serif; */
+  font-family: 'Josefin Sans', cursive; 
+}

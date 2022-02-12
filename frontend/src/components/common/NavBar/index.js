@@ -1,31 +1,30 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import './index.css'
-import '@fontsource/roboto/300.css'
-import { AccessAlarm } from '@mui/icons-material'
-import Button from '@mui/material/Button'
+import React, { useState } from 'react'
+
+import AppBar from '@mui/material/AppBar'
+import Toolbar from '@mui/material/Toolbar'
+import Container from '@mui/material/Container'
+
+import { PathSelections } from './PathSelections.js'
+import { UserMenu } from './UserMenu.js'
+import { Logins } from './Logins.js'
+
+/* eslint-disable-next-line */
+export const NavBar = ({ currentTheme, toggleTheme }) => {
+/* eslint-disable-next-line */
+  const [loggedIn, setLoggedIn] = useState(false)
 
 
-export const NavBar = () => {
-  console.log('rendering navbar')
   return (
-    <nav>
-      <li>
-        <Link to="/">Home</Link>
-      </li>
-      <li>
-        <Link to="/info">Info</Link>
-      </li>
-
-      <li>
-        <AccessAlarm></AccessAlarm>
-      </li>
-      <li>
-        <Button variant="contained">Hello</Button>
-      </li>
-
-    </nav>
-
+    <AppBar color="secondary" position="static">
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          <PathSelections />
+          {loggedIn ?
+            <UserMenu /> : <Logins />
+          }
+        </Toolbar>
+      </Container>
+    </AppBar>
   )
 }
 

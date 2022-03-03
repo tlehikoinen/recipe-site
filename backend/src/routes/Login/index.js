@@ -11,7 +11,7 @@ const jwt = require('jsonwebtoken')
 
 router.post('/', async (req, res, next) => {
 
-  const userInDb = await User.findOne( { email: req.body.email })
+  const userInDb = await User.findOne( { email: req.body.email }).select('+hashPassword')
 
   const correctPassword = userInDb === null
     ? false
@@ -24,14 +24,14 @@ router.post('/', async (req, res, next) => {
 
   const userForToken = {
     username: userInDb.username,
-    id: userInDb._id
+    id: userInDb.id
   }
 
   const token = jwt.sign(userForToken, config.SECRET)
 
   logger.info('Login successful')
 
-  res.status(200).send({ token, username: userInDb.username })
+  res.status(200).send({ token, user: userInDb })
 })
 
 module.exports = router

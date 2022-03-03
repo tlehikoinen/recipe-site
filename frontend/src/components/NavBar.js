@@ -1,11 +1,12 @@
 /* eslint-disable-next-line */
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { AppBar, Box, Button, IconButton, InputBase, Menu, MenuItem, Paper, Toolbar, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import SearchIcon from '@mui/icons-material/Search'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import MenuIcon from '@mui/icons-material/Menu'
 import { Link } from 'react-router-dom'
+import Contexts from '../contexts'
 
 
 const pages = [
@@ -54,7 +55,6 @@ const useStyles = makeStyles(theme => ({
 const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = useState(null)
   const [anchorElUserMenu, setAnchorElUserMenu] = useState(null)
-  const loggedIn = false
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget)
@@ -73,6 +73,8 @@ const NavBar = () => {
   }
 
   const classes = useStyles()
+
+  const { user } = useContext(Contexts.UserContext)
 
   return (
     <Paper>
@@ -158,7 +160,7 @@ const NavBar = () => {
               open={Boolean(anchorElUserMenu)}
               onClose={handleCloseUserMenu}>
               {
-                loggedIn ? (
+                user ? (
                   userPages.map((page) => (
                     <MenuItem key={page.name} onClick={handleCloseUserMenu} component={Link} to={page.url}>
                       <Typography textAlign="center">{page.name}</Typography>

@@ -3,7 +3,7 @@ import { Grid, Link, Typography } from '@mui/material'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 //import useStyles from './styles'
-import LoginServices from '../../services/loginServices'
+import UserServices from '../../services/userServices'
 import { Form } from '../../components/useForm'
 import Controls from '../../components/controls/Controls'
 
@@ -52,13 +52,13 @@ const SignUpForm = () => {
 
   const formik = useFormik({
     initialValues: {
-      email: '',
-      username: '',
-      password: ''
+      email: 'akuankka@gmail.com',
+      username: 'tomppa',
+      password: 'salasana'
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      const res = await LoginServices.signUp(values)
+      const res = await UserServices.signUp(values)
       if (res.status !== 201) {
         const { field, message } = generateFieldErrorMessage(res.data.error)
         formik.setErrors({ [field]: message } )

@@ -11,6 +11,7 @@ const middleware = require('./utils/middleware')
 const todoRouter = require('./routes/Todos/todos')
 const loginRouter = require('./routes/Login')
 const signUpRouter = require('./routes/SignUp')
+const usersRouter = require('./routes/Users')
 
 const app = express()
 app.use(express.static('build'))
@@ -26,11 +27,12 @@ app.use((req, res, next) => {
 })
 
 app.use(bodyParser.json())
+app.use(middleware.tokenExtractor)
 //app.use(middleware.requestLogger)
 app.use('/api/todos', todoRouter)
 app.use('/api/login', loginRouter)
 app.use('/api/signup', signUpRouter)
-
+app.use('/api/users', usersRouter)
 // Other api requests with no existing path go to unkown endpoint (404)
 app.use('/api/*', middleware.unknownEndpoint)
 
@@ -50,5 +52,17 @@ mongoose
 // Since mongoose's Promise is deprecated, we override it with Node's Promise
 mongoose.Promise = global.Promise
 
+// AWS MOCK
+const AWSMock = require('mock-aws-s3')
+AWSMock.config.basePath = './temp_s3' // Can configure a basePath for your local buckets
+var s3 = AWSMock.S3({})
+
+s3.createBucket({ Bucket: 'avatars' }, (err) => {
+  if (err) {
+    console.log('Bucket creation failed')
+  } else {
+    console.log('S3 bucket for avatars created successfully')
+  }
+})
 
 module.exports = app

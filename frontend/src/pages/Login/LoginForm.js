@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { Form } from '../../components/useForm'
 
-import LoginServices from '../../services/loginServices'
+import UserServices from '../../services/userServices'
+import Contexts from '../../contexts'
 
 import Controls from '../../components/controls/Controls'
 import { Grid, Typography } from '@mui/material'
@@ -19,23 +21,32 @@ const validationSchema = yup.object({
 })
 
 const LoginForm = () => {
+
+  const { setUser } = useContext(Contexts.UserContext)
+  const history = useNavigate()
+
+  const handleLogin = (data) => {
+    window.localStorage.setItem('userJson', JSON.stringify(data))
+    UserServices.setToken(data.token)
+    setUser(data)
+    history('/home')
+  }
   const formik = useFormik({
     initialValues: {
-      email: '',
-      password: '',
+      email: 'akuankka@gmail.com',
+      password: 'salasana',
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      const res = await LoginServices.login(values)
+      const res = await UserServices.login(values)
       if (res.status !== 200) {
         formik.setErrors( { password: 'Wrong email or password' })
       }
       else {
-        alert(`Login successfull ${JSON.stringify(res.data, null, 2)}`)
+        handleLogin(res.data)
       }
     },
   })
-
 
   return (
 

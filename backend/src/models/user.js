@@ -22,11 +22,41 @@ const UserSchema = new Schema({
   hashPassword: {
     type: String,
     required: [true, 'The hashPassword text field is required'],
-    minLength: [8, 'Password must have 8 characters']
+    minLength: [8, 'Password must have 8 characters'],
+    select: false
   },
+  joinDate: {
+    type: Date,
+    default: new Date()
+  },
+  description: {
+    type: String,
+    default: 'No description'
+  },
+  avatar: {
+    type: String,
+    default: ''
+  },
+  recipes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Recipe'
+    }
+  ]
 
 })
 
-const User = mongoose.model('user', UserSchema)
+UserSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id,
+    delete returnedObject._id,
+    delete returnedObject.hashPassword,
+    delete returnedObject.__v
+  }
+})
+
+
+
+const User = mongoose.model('User', UserSchema)
 
 module.exports = User

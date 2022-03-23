@@ -6,6 +6,8 @@ import Login from './pages/Login'
 import LogOut from './pages/LogOut'
 import Profile from './pages/Profile'
 import SignUp from './pages/SignUp'
+import UserProfiles from './pages/UserProfiles'
+import UserProfile from './pages/UserProfile'
 import { Container } from '@material-ui/core'
 
 import Unknown from './components/Unknown'
@@ -60,6 +62,8 @@ const App = () => {
             <Route path="/logout" element={<LogOut />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/users" element={<UserProfiles />} />
+            <Route path="/users/:id" element={<UserProfile />} />
             <Route path="/" element={<Todo />} />
             <Route path="/*" element={<Unknown />} />
           </Routes>

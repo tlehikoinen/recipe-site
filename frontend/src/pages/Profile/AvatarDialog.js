@@ -5,6 +5,9 @@ import { makeStyles } from '@mui/styles'
 import BlankProfile from './blank_profile.png'
 import userServices from '../../services/userServices'
 
+/* eslint-disable */
+import Resizer from 'react-image-file-resizer'
+
 const useStyles = makeStyles((theme) => ({
   root: {
     '& .MuiDialog-container': {
@@ -42,6 +45,29 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
+const resizeFile = (file) =>
+  new Promise((resolve) => {
+    Resizer.imageFileResizer(
+      file,
+      1000,
+      1000,
+      'JPEG',
+      100,
+      0,
+      (uri) => {
+        resolve(uri)
+      },
+      'file'  // Output type, can be 'base64', 'blob', or 'file'
+    )
+  })
+
+  // Convert base64 to file
+  async function dataUrlToFile(dataUrl, fileName) {
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+    return new File([blob], fileName, { type: 'image/png' });
+}
+
 const AvatarDialog = (props) => {
   const { context, open, handleClose } = props
   const classes = useStyles()
@@ -52,7 +78,7 @@ const AvatarDialog = (props) => {
   const [imgError, setImgError] = useState('Image was not supported')
 
   useEffect(async () => {
-    if (context.user.user.avatar === '') {
+    if (context.user.user.avatar.key === '') {
       setAvatar(BlankProfile)
     } else {
       setAvatar(BlankProfile)
@@ -80,10 +106,23 @@ const AvatarDialog = (props) => {
     }
   }
 
-  const onChangeFile = (e) => {
-    const file = e.target.files[0]
-    setFile(file)
-    setAvatar(URL.createObjectURL(file))
+  const onChangeFile = async (e) => {
+    try {
+      const file = e.target.files[0]
+      console.log('FIle size')
+      console.log(file)
+      if (file.size > 999999) { // 1 MB
+        const newFile = await resizeFile(file)  // Resize image
+        setFile(newFile)
+        setAvatar(URL.createObjectURL(newFile))
+      } else {  // No need to resize
+        setFile(file)
+        setAvatar(URL.createObjectURL(file))
+      }
+
+    } catch(err) {
+      console.log(err)
+    }
   }
 
 

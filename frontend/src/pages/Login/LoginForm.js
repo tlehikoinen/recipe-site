@@ -49,7 +49,6 @@ const LoginForm = () => {
   })
 
   return (
-
     <Form onSubmit={formik.handleSubmit}>
       <Grid container direction="column" justify='center' alignItems='center'>
         <Grid item>

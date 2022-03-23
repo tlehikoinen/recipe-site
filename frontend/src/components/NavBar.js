@@ -12,6 +12,7 @@ import Contexts from '../contexts'
 const pages = [
   { name: 'home', url:'/' },
   { name: 'recipes', url:'/recipes' },
+  { name: 'users', url: '/users' },
   { name: 'info', url:'/info' }]
 
 const userPages = [

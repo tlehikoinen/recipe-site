@@ -34,8 +34,11 @@ const UserSchema = new Schema({
     default: 'No description'
   },
   avatar: {
-    type: String,
-    default: ''
+    type: Object,
+    default: {
+      key: '',
+      location: ''
+    }
   },
   recipes: [
     {

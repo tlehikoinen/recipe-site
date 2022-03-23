@@ -60,6 +60,8 @@ router.post('/avatars/:id', middleware.userExtractor, async (req, res, next) => 
     const error = { name: 'FalseLogin', message: 'Wrong username or password' }
     return next(error)
   } else {
+    // Todo: Save previous image location and delete it from S3 if upload is successful
+    // Resize image before uploading to server
     // Upload file to server
     upload(req,res, async (err) => {
       if(err) {
@@ -69,7 +71,9 @@ router.post('/avatars/:id', middleware.userExtractor, async (req, res, next) => 
       else {
         try {
           const s3_res = await uploadFile(req.file)   // Upload file to S3
-          const updatedUser = await User.findByIdAndUpdate(req.params.id, { avatar: s3_res.Key }, { new: true })
+          console.log('S3 Response')
+          console.log(s3_res)
+          const updatedUser = await User.findByIdAndUpdate(req.params.id, { avatar: { key: s3_res.Key, location: s3_res.Location } }, { new: true })
           res.status(200).send({ user: updatedUser })
         }
         catch(e) {
@@ -85,14 +89,33 @@ router.post('/avatars/:id', middleware.userExtractor, async (req, res, next) => 
 
 router.get('/avatars/:id', async (req, res, next) => {
   const userInDb = await User.findById(req.params.id)
-  const file = await getFileStream(userInDb.avatar)
+  console.log(userInDb)
+  const file = await getFileStream(userInDb.avatar.key)
+  res.set('Cache-Control', 'private, max-age=2629743, must-revalidate') // cache one month
   file.pipe(res)
 })
 
-router.get('/', async (req, res) => {
-  const users = await User.find()
-  logger.info(JSON.stringify(users))
-  res.status(200).json(users)
+router.get('/', async (req, res, next) => {
+  try {
+    const users = await User.find()
+    res.set('Cache-Control', 'private, max-age=60, must-revalidate') // cache 1 min
+    res.status(200).json(users)
+  } catch(e) {
+    next(e)
+  }
+})
+
+router.get('/:id', async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id)
+    res.set('Cache-Control', 'private, max-age=60, must-revalidate') // cache minute
+    res.status(200).json(user)
+    console.log('done')
+
+  } catch(e) {
+    console.log('error')
+    next(e)
+  }
 })
 
 // .../api/users/id
@@ -108,7 +131,9 @@ router.delete('/:id', middleware.userExtractor, async (req, res, next) => {
 
 router.post('/confirmAndDelete', middleware.userExtractor, async (req, res, next) => {
   try {
-    const userInDb = await User.findOne({ id: req.user.id }).select('+hashPassword')
+    const userInDb = await User.findById(req.user.id).select('+hashPassword')
+    console.log('deleting')
+    console.log(userInDb)
     const correctPassword = userInDb === null
       ? false
       : await bcrypt.compare(req.body.password, userInDb.hashPassword)
@@ -117,7 +142,7 @@ router.post('/confirmAndDelete', middleware.userExtractor, async (req, res, next
       const error = { name: 'FalseLogin', message: 'Wrong username or password' }
       return next(error)
     } else {
-      await User.findOneAndDelete( { id: req.user.id })
+      await User.findByIdAndDelete(req.user.id)
       res.status(200).send('Delete successful')
     }
 
@@ -145,8 +170,6 @@ router.put('/:id', middleware.userExtractor, async (req, res, next) => {
     next(e)
   }
 })
-
-
 
 
 module.exports = router

@@ -11,6 +11,7 @@ import DescriptionDialog from './DescriptionDialog'
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    maxWidth: '400px',
     '& .MuiButton-root': {
       minWidth: '80px',
     },
@@ -42,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
       }
     },
     '& .MuiTypography-root': {
-      textAlign: 'center'
+      textAlign: 'center',
     },
     '& .MuiDialogActions-root': {
       justifyContent: 'center'
@@ -68,7 +69,7 @@ const UserProfile = ({ context }) => {
   const avatarDialog = useDialog()
 
   useEffect(async () => {
-    if (context.user.user.avatar === '') {
+    if (context.user.user.avatar.key === '') {
       setAvatar(BlankProfile)
     } else {
       setAvatar(BlankProfile)
@@ -82,21 +83,19 @@ const UserProfile = ({ context }) => {
       { !showEdit?
         <CardContent>
           <Grid container>
-            <Grid item xs={5} sm={5}>
+            <Grid item xs={6}>
               <CardContent>
                 <CardMedia
                   component='img'
                   src={avatar} />
               </CardContent>
             </Grid>
-            <Grid item xs={7} sm={7}>
+            <Grid item xs={6}>
               <CardContent>
                 <Box display='flex' flexDirection={'column'}>
-                  <Box>
-                  </Box>
                   <Typography variant='h6'>{context.user.user.username}</Typography>
                   <Typography variant='body2'>{`Join Date ${context.user.user.joinDate.split('T')[0]}`}</Typography>
-                  <Typography variant='body1'>{context.user.user.description}</Typography>
+                  <Typography style={{ wordWrap: 'break-word' }} variant='body1'>{context.user.user.description}</Typography>
                 </Box>
               </CardContent>
             </Grid>

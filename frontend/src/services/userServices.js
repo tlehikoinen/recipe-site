@@ -46,6 +46,16 @@ const getAvatar = async(userId) => {
   return response
 }
 
+const getUser = async (id) => {
+  const response = await axios.get(`${baseUrl}/users/${id}`)
+  return response
+}
+
+const getUsers = async () => {
+  const response = await axios.get(`${baseUrl}/users`)
+  return response.data
+}
+
 const postAvatar = async(userId, avatar) => {
 
   const formData = new FormData()
@@ -69,6 +79,6 @@ const signUp = async(user) => {
   return response
 }
 
-export default { deleteUserWithConfirmation, getAvatar, login, postAvatar, setToken, signUp, updateDescription }
+export default { deleteUserWithConfirmation, getAvatar, getUser, getUsers, login, postAvatar, setToken, signUp, updateDescription }
 
 

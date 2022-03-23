@@ -32,7 +32,7 @@ function uploadFile(file) {
 
   return s3.upload(uploadParams).promise()
 }
-exports.uploadFile = uploadFile
+//exports.uploadFile = uploadFile
 
 
 // downloads a file from s3
@@ -44,4 +44,10 @@ function getFileStream(fileKey) {
   }
   return s3.getObject(downloadParams).createReadStream()
 }
-exports.getFileStream = getFileStream
+//exports.getFileStream = getFileStream
+
+
+module.exports = {
+  getFileStream,
+  uploadFile
+}

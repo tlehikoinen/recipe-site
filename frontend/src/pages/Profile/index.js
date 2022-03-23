@@ -28,7 +28,7 @@ const index = () => {
         <Grid container className={classes.root}> 
           <UserProfile context={context} />
         </Grid> :
-        <div>Nothiig</div>
+        <div>Log in first</div>
       }
 
     </>

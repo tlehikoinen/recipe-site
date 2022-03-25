@@ -2,3 +2,4 @@ aikakirjanpito.md
 ideointia.txt
 .env
 **/node_modules
+backend/uploads

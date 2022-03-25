@@ -5,7 +5,6 @@ import { makeStyles } from '@mui/styles'
 import BlankProfile from './blank_profile.png'
 import userServices from '../../services/userServices'
 
-/* eslint-disable */
 import Resizer from 'react-image-file-resizer'
 
 const useStyles = makeStyles((theme) => ({
@@ -61,12 +60,12 @@ const resizeFile = (file) =>
     )
   })
 
-  // Convert base64 to file
-  async function dataUrlToFile(dataUrl, fileName) {
-    const res = await fetch(dataUrl);
-    const blob = await res.blob();
-    return new File([blob], fileName, { type: 'image/png' });
-}
+// Convert base64 to file
+// async function dataUrlToFile(dataUrl, fileName) {
+//   const res = await fetch(dataUrl);
+//   const blob = await res.blob();
+//   return new File([blob], fileName, { type: 'image/png' });
+// }
 
 const AvatarDialog = (props) => {
   const { context, open, handleClose } = props
@@ -81,7 +80,6 @@ const AvatarDialog = (props) => {
     if (context.user.user.avatar.key === '') {
       setAvatar(BlankProfile)
     } else {
-      setAvatar(BlankProfile)
       setAvatar(`/api/users/avatars/${context.user.user.id}`)
     }
   }, [])
@@ -109,8 +107,6 @@ const AvatarDialog = (props) => {
   const onChangeFile = async (e) => {
     try {
       const file = e.target.files[0]
-      console.log('FIle size')
-      console.log(file)
       if (file.size > 999999) { // 1 MB
         const newFile = await resizeFile(file)  // Resize image
         setFile(newFile)
@@ -119,12 +115,10 @@ const AvatarDialog = (props) => {
         setFile(file)
         setAvatar(URL.createObjectURL(file))
       }
-
     } catch(err) {
       console.log(err)
     }
   }
-
 
   return (
     <Dialog className={classes.root} open={open} onClose={handleClose}>

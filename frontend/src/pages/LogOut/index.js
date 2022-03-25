@@ -25,6 +25,7 @@ const index = () => {
   useEffect(() => {
     window.localStorage.removeItem('userJson')
     setUser(null)
+    console.log('userJson was deleted')
   }, [])
 
   return (

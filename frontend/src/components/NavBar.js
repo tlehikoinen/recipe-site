@@ -1,4 +1,3 @@
-/* eslint-disable-next-line */
 import React, { useContext, useState } from 'react'
 import { AppBar, Box, Button, IconButton, InputBase, Menu, MenuItem, Paper, Toolbar, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'

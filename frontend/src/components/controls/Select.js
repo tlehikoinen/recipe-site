@@ -8,7 +8,7 @@ const Select = (props) => {
 
   return (
     <FormControl
-      variant="outlined">
+      variant="outlined" >
       <InputLabel>{label}</InputLabel>
       <MuiSelect
         label={label}
@@ -18,7 +18,7 @@ const Select = (props) => {
         <MenuItem value="">None</MenuItem>
         {
           options.map((item, index) => (
-            <MenuItem key={index} value={item.id}>{item.title}</MenuItem>
+            <MenuItem key={index} value={item.title}>{item.title}</MenuItem>
           ))
         }
 

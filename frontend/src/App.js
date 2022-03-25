@@ -5,6 +5,7 @@ import Info from './pages/Info'
 import Login from './pages/Login'
 import LogOut from './pages/LogOut'
 import Profile from './pages/Profile'
+import Recipes from './pages/Recipes'
 import SignUp from './pages/SignUp'
 import UserProfiles from './pages/UserProfiles'
 import UserProfile from './pages/UserProfile'
@@ -34,24 +35,19 @@ const App = () => {
   const userCtx = { user, setUser }
 
   useEffect(() => {
-    //const tokenJson = window.localStorage.getItem('tokenJson')
     const userJson = window.localStorage.getItem('userJson')
-    console.log('APP USE EFFECT')
     if (userJson) {
       const user = JSON.parse(userJson)
-      //const token = JSON.parse(tokenJson)
       if (user) {
-        console.log('user')
         console.log(Object.entries(user))
         UserServices.setToken(user.token)
-
       }
       setUser(user)
     }
   }, [])
 
   return (
-    <Contexts.UserContext.Provider value={userCtx}>
+    userCtx && <Contexts.UserContext.Provider value={userCtx}>
       <ThemeProvider theme={LightTheme}>
         <CssBaseline/>
         <Container disableGutters maxWidth="xl">
@@ -61,6 +57,7 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/logout" element={<LogOut />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/recipes" element={<Recipes />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/users" element={<UserProfiles />} />
             <Route path="/users/:id" element={<UserProfile />} />

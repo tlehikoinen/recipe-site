@@ -1,8 +1,9 @@
 import React, { useContext } from 'react'
 import { Grid } from '@mui/material'
 import { makeStyles } from '@mui/styles'
-import UserProfile from './UserProfile'
+import OwnUserProfile from './OwnUserProfile'
 import Contexts from '../../contexts'
+import UserErrorBox from '../../components/profile/UserErrorBox'
 /*eslint-disable*/
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,9 +27,9 @@ const index = () => {
     <>
       { (context.user) ? 
         <Grid container className={classes.root}> 
-          <UserProfile context={context} />
+          <OwnUserProfile context={context} />
         </Grid> :
-        <div>Log in first</div>
+        <UserErrorBox message="Log in first" />
       }
 
     </>

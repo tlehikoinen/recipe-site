@@ -19,6 +19,16 @@ const s3 = new S3({
   secretAccessKey
 })
 
+// deletes file from S3
+const deleteFile = (fileKey) => {
+  Logger.info('Deleting avatar')
+  const deleteParams = {
+    Key: fileKey,
+    Bucket: bucketName
+  }
+  return s3.deleteObject(deleteParams).promise()
+}
+
 // uploads a file to s3
 function uploadFile(file) {
   Logger.info('S3 uploading avatar')
@@ -29,11 +39,8 @@ function uploadFile(file) {
     Body: fileStream,
     Key: file.filename
   }
-
   return s3.upload(uploadParams).promise()
 }
-//exports.uploadFile = uploadFile
-
 
 // downloads a file from s3
 function getFileStream(fileKey) {
@@ -44,10 +51,9 @@ function getFileStream(fileKey) {
   }
   return s3.getObject(downloadParams).createReadStream()
 }
-//exports.getFileStream = getFileStream
-
 
 module.exports = {
+  deleteFile,
   getFileStream,
   uploadFile
 }

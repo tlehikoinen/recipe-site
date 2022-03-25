@@ -1,6 +1,5 @@
 import { makeStyles } from '@mui/styles'
-/* eslint-disable-next-line */
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   inputContainer: {
     marginTop: 8,
     padding: 5,

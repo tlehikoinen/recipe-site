@@ -35,7 +35,13 @@ export const useForm = (initialValues) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
-    setValues({ ...values, [name]:value })
+
+    // Uncheck radiobox on double click
+    if (name === 'radioSelection' && values.radioSelection === value) {
+      setValues({ ...values, [name]: '' })
+    } else {
+      setValues({ ...values, [name]:value })
+    }
   }
 
   const [values, setValues] = useState(initialValues)

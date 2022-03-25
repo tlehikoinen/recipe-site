@@ -45,6 +45,18 @@ const UserSchema = new Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Recipe'
     }
+  ],
+  following: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Follower'
+    }
+  ],
+  followers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Follower'
+    }
   ]
 
 })

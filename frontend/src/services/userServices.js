@@ -8,6 +8,18 @@ const setToken = (newToken) => {
   token = `Bearer ${newToken}`
 }
 
+const addFollow = async (userId) => {
+  const config = { headers: { Authorization : token } }
+  const response = await axios.put(`${baseUrl}/users/follow/${userId}`, {}, config)
+  return response
+}
+
+const deleteFollow = async (userId) => {
+  const config = { headers: { Authorization : token } }
+  const response = await axios.delete(`${baseUrl}/users/follow/${userId}`, config)
+  return response
+}
+
 const deleteUserWithConfirmation = async (password) => {
   const config = { headers: { Authorization : token } }
   const response = await axios.post(`${baseUrl}/users/confirmAndDelete`, password, config)
@@ -48,6 +60,10 @@ const getAvatar = async(userId) => {
 
 const getUser = async (id) => {
   const response = await axios.get(`${baseUrl}/users/${id}`)
+    .catch((error) => {
+      const { response } = error
+      return response
+    })
   return response
 }
 
@@ -79,6 +95,6 @@ const signUp = async(user) => {
   return response
 }
 
-export default { deleteUserWithConfirmation, getAvatar, getUser, getUsers, login, postAvatar, setToken, signUp, updateDescription }
+export default { addFollow, deleteFollow, deleteUserWithConfirmation, getAvatar, getUser, getUsers, login, postAvatar, setToken, signUp, updateDescription }
 
 

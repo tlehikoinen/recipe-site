@@ -1,8 +1,7 @@
 import React from 'react'
-import { Grid, Link, Typography } from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
-//import useStyles from './styles'
 import UserServices from '../../services/userServices'
 import { Form } from '../../components/useForm'
 import Controls from '../../components/controls/Controls'
@@ -47,8 +46,6 @@ const generateFieldErrorMessage = (error) => {
 }
 
 const SignUpForm = () => {
-  /* eslint-disable-next-line */
-  const [forgotPassword, setForgotPassword] = React.useState(false)
 
   const formik = useFormik({
     initialValues: {
@@ -109,9 +106,6 @@ const SignUpForm = () => {
         </Grid>
         <Grid item>
           <Controls.Button text="Create" type="submit" size="small" />
-        </Grid>
-        <Grid item>
-          <Link style={{ textDecoration: 'none' }} variant='subtitle2' >Forgotten password</Link>
         </Grid>
       </Grid>
 

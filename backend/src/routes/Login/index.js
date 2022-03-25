@@ -8,10 +8,9 @@ const jwt = require('jsonwebtoken')
 
 //const Todo = require('../../models/todo')
 
-
 router.post('/', async (req, res, next) => {
 
-  const userInDb = await User.findOne( { email: req.body.email }).select('+hashPassword')
+  const userInDb = await User.findOne( { email: req.body.email }).select('+hashPassword').populate('recipes')
 
   const correctPassword = userInDb === null
     ? false

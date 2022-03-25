@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Card, CardContent, CardMedia, Grid, Typography } from '@mui/material'
+import { Box, Card, CardContent, Grid, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
 import { makeStyles } from '@mui/styles'
 import Controls from '../../components/controls/Controls'
@@ -8,6 +8,7 @@ import { useDialog } from '../../components/useDialog'
 import AvatarDialog from './AvatarDialog'
 import ConfirmDeleteDialog from './ConfirmDeleteDialog'
 import DescriptionDialog from './DescriptionDialog'
+import ImageWithDialog from '../../components/images/ImageWithDialog'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -59,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const UserProfile = ({ context }) => {
+const OwnUserProfile = ({ context }) => {
 
   const [avatar, setAvatar] = useState(null)
   const [showEdit, setShowEdit] = useState(false)
@@ -83,14 +84,12 @@ const UserProfile = ({ context }) => {
       { !showEdit?
         <CardContent>
           <Grid container>
-            <Grid item xs={6}>
+            <Grid item xs={5}>
               <CardContent>
-                <CardMedia
-                  component='img'
-                  src={avatar} />
+                <ImageWithDialog avatar={avatar} />
               </CardContent>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={7}>
               <CardContent>
                 <Box display='flex' flexDirection={'column'}>
                   <Typography variant='h6'>{context.user.user.username}</Typography>
@@ -147,8 +146,8 @@ const UserProfile = ({ context }) => {
   )
 }
 
-UserProfile.propTypes = {
+OwnUserProfile.propTypes = {
   UserProfile: PropTypes.object
 }
 
-export default UserProfile
+export default OwnUserProfile

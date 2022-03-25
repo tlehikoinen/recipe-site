@@ -1,94 +1,127 @@
 import React, { useContext, useEffect, useState } from 'react'
-import useStyles from './styles.js'
 import { useParams } from 'react-router-dom'
 import Controls from '../../components/controls/Controls'
-import { Box, Card, CardContent, CardMedia, Grid, Typography } from '@mui/material'
-import BlankProfile from '../Profile/blank_profile.png'
-
+import UserProfile from '../../components/profile/UserProfile.js'
+import { CardContent, Grid } from '@mui/material'
+import SimpleRecipe from '../../components/recipe/SimpleRecipe/index.js'
 import Contexts from '../../contexts'
-import userServices from '../../services/userServices'
+import UserServices from '../../services/userServices'
+import UserErrorBox from '../../components/profile/UserErrorBox'
 
 const index = () => {
-  const classes = useStyles()
-  const [avatar, setAvatar] = useState(null)
   const [user, setUser] = useState(null)
   const params = useParams()
-  //const history = useNavigate()
+  const [showRecipes, setShowRecipes] = useState(false)
+  const [follower, setFollower] = useState(false)
 
   const context = useContext(Contexts.UserContext)
 
-  useEffect(async () => {
-    const res = await userServices.getUser(params.id)
-    if (res.data !== null) {
-      // if(res.data.username === context.user?.user.username) {
-      //   history('/profile')
-      // } else {
-      //   console.log('not own profile')
-      // }
-      if (res.data.avatar.key !== '') {
-        setAvatar(`/api/users/avatars/${res.data.id}`)
+  useEffect(() => {
+    let mounted = true
+
+    const fetchUser = async () => {
+      const res = await UserServices.getUser(params.id)
+      if (res.data !== null && res.status === 200 && mounted) {
+        if (res.data.followers.some(follower => context.user?.user.following.some(f => f.toString() === follower.toString()))) {
+          setFollower(true)
+        } else {
+          setFollower(false)
+        }
+        setUser(res.data)
       } else {
-        setAvatar(BlankProfile)
+        setUser(false)
       }
-      setUser(res.data)
-    } else {
-      setUser(false)
     }
-  }, [])
+    fetchUser()
+
+    return () => {
+      mounted = false
+    }
+
+  }, [context])
+
+  const message = () => {
+    console.log('Sending message')
+  }
+  const recipes = () => {
+    setShowRecipes(true)
+  }
+  const follow = async () => {
+    const res = await UserServices.addFollow(user.id)
+    if (res.status === 200) {
+      // Update context users followers (this also causes follow button to change to unfollow)
+      const prevUser = window.localStorage.getItem('userJson')
+      const newUser = { ...JSON.parse(prevUser), user: (res.data.user) }
+      window.localStorage.setItem('userJson', JSON.stringify(newUser))
+      context.setUser(newUser)
+    } else {
+      // Todo: Add better error handling
+      console.log('fail')
+    }
+  }
+  const deleteFollow = async () => {
+    const res = await UserServices.deleteFollow(user.id)
+    if (res.status === 202) {
+      // Update context users followers (this also causes unfollow button to change to follow)
+      const prevUser = window.localStorage.getItem('userJson')
+      const newUser = { ...JSON.parse(prevUser), user: (res.data.user) }
+      window.localStorage.setItem('userJson', JSON.stringify(newUser))
+      context.setUser(newUser)
+    } else {
+      // Todo: Add better error handling
+      console.log('fail')
+    }
+  }
 
   return (
-    <Grid container className={classes.root}>
-      <Card className={classes.card}>
-        {user === null ?  // user is null at start, render empty so "User not found" is not shown at load
+    <>
+      {user === null ?  // user is null at start, render empty so "User not found" is not shown at load
+        <> </>
+        : user !== false ?
           <>
-          </>
-          : user ?
-            <CardContent>
-              <Grid container>
-                <Grid item xs={6}>
-                  <CardContent>
-                    <CardMedia
-                      component='img'
-                      src={avatar} />
-                  </CardContent>
-                </Grid>
-                <Grid item xs={6}>
-                  <CardContent>
-                    <Box display='flex' flexDirection={'column'}>
-                      <Box>
-                      </Box>
-                      <Typography variant='h6'>{user.username}</Typography>
-                      <Typography variant='body2'>{`Join Date ${user.joinDate.split('T')[0]}`}</Typography>
-                      <Typography variant='body1'>{user.description}</Typography>
-                    </Box>
-                  </CardContent>
-                </Grid>
-              </Grid>
+            <UserProfile user={user}>
               <Grid container flexWrap='nowrap' justifyContent={'center'}>
                 <Grid item>
                   <CardContent>
-                    <Controls.Button size='small' text='Message' disabled={context.user ? false : true}/>
+                    <Controls.Button size='small' onClick={message} text='Message' disabled={context.user ? false : true} />
                   </CardContent>
                 </Grid>
                 <Grid item>
                   <CardContent>
-                    <Controls.Button size='small' text='Recipes' />
+                    <Controls.Button size='small' onClick={recipes} text='Recipes' disabled={user.recipes.length === 0} />
                   </CardContent>
                 </Grid>
                 <Grid item>
-                  <CardContent>
-                    <Controls.Button size='small' text='Follow' disabled={context.user ? false : true}/>
-                  </CardContent>
+                  {!follower &&
+                    <CardContent>
+                      <Controls.Button size='small' onClick={follow} text='Follow' disabled={context.user ? false : true} />
+                    </CardContent>
+                  }
+                  {follower &&
+                    <CardContent>
+                      <Controls.Button size='small' onClick={deleteFollow} text='Unfollow' disabled={context.user ? false : true} />
+                    </CardContent>
+                  }
                 </Grid>
               </Grid>
-            </CardContent>
-            :
-            <CardContent>
-              <Typography variant='h5'>User not found</Typography>
-            </CardContent>
-        }
-      </Card>
-    </Grid>
+            </UserProfile>
+            {showRecipes &&
+              <Grid container direction="column" flexWrap='nowrap' justifyContent={'center'}>
+                {
+                  user.recipes?.map(r => (
+                    <Grid item key={r.id}>
+                      <SimpleRecipe recipe={r}>
+                        <Controls.Button size="small" text="Open" />
+                      </SimpleRecipe>
+                    </Grid>
+                  ))
+                }
+              </Grid>
+            }
+          </>
+          :
+          <UserErrorBox message="User not found" />}
+    </>
   )
 }
 

@@ -48,6 +48,10 @@ const RecipeSchema = new Schema({
       key: '',
       location: ''
     }
+  },
+  servings: {
+    type: Number,
+    required: false
   }
 })
 

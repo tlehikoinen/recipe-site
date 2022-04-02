@@ -1,12 +1,20 @@
-import { Box, Card, CardContent, Grid, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
+import { Box, Card, CardContent, Grid, Typography } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 import recipeStyles from './styles'
 import BlankProfile from '../../../pages/Profile/blank_profile.png'
 import { generateFoodAvatar } from '../recipeHelpers'
 import ImageWithDialog from '../../images/ImageWithDialog'
+//import { useDialog } from '../../useDialog'
 
 const SimpleRecipe = ({ recipe, children }) => {
   const [avatar, setAvatar] = useState(BlankProfile)
+  let navigate = useNavigate()
+
+  // When Grid with ImageWithDialog is clicked, imgDialogOpen tracks state...
+  // ... On new click, no matter the location, same location is called again, toggling the state
+  // * THIS PREVENTS REDIRECTIONS TO RECIPE PAGE WHEN IMG IS CLICKED * //
+  const [imgDialogOpen, setImgDialogOpen] = useState(false)
 
   useEffect(async () => {
     if (recipe.avatar.key === '') {
@@ -18,15 +26,22 @@ const SimpleRecipe = ({ recipe, children }) => {
 
   const classes = recipeStyles()
 
-  const clicking = (id) => {
-    console.log(`Clicked recipe id ${id}`)
+  const clicking = (e) => {
+    if (!e.target.classList.contains('img-skip-click') && !imgDialogOpen){
+      navigate(`/recipes/${recipe.id}`)
+    }
+  }
+  const toggleImgDialogOpen = (e) => {
+    if (!(e.target.classList.contains('img-dialog') && imgDialogOpen)) {
+      setImgDialogOpen(!imgDialogOpen)
+    }
   }
   return (
-    <Grid container className={classes.root} onClick={() => clicking(recipe.id)}>
-      <Card className={classes.card} sx={{ raised: true }}>
-        <CardContent>
+    <Grid container className={classes.root}>
+      <Card className={classes.card}>
+        <CardContent onClick={(e) => clicking(e)}>
           <Grid container direction='column'>
-            <Grid>
+            <Grid item>
               <Box>
                 <Typography variant='h6' className={classes.recipeHeader}>{recipe.title}</Typography>
                 <Typography variant='caption'>{recipe.user?.username}</Typography>
@@ -34,8 +49,8 @@ const SimpleRecipe = ({ recipe, children }) => {
             </Grid>
             <Grid item>
               <Grid container direction='row'>
-                <Grid item xs={5}>
-                  <ImageWithDialog avatar={avatar} alt={'s avatar'} loading="lazy" />
+                <Grid item xs={5} onClick={(e) => toggleImgDialogOpen(e)} >
+                  <ImageWithDialog className='img-skip-click' avatar={avatar} alt={'s avatar'} loading="lazy" />
                 </Grid>
                 <Grid item xs={7} className={classes.recipeInfo}>
                   <Box display='flex' flexDirection={'column'}>

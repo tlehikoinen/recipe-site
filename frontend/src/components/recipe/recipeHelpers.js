@@ -7,9 +7,10 @@ import Vege from './food_images/vege_1.PNG'
 const saltys = [Salty1, Salty2]
 const sweets = [Sweet1, Sweet2]
 const veges = [Vege]
+const allImages = { saltys, sweets, veges }
 
 export const generateFoodAvatar = (type) => {
-  if (type === 'salty') {
+  if (type === 'savory') {
     return saltys[Math.floor(Math.random()*saltys.length)]
   }
   else if (type === 'sweet') {
@@ -19,3 +20,5 @@ export const generateFoodAvatar = (type) => {
     return veges[Math.floor(Math.random()*veges.length)]
   }
 }
+
+export default allImages

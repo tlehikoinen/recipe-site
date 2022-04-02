@@ -60,11 +60,11 @@ const resizeFile = (file) =>
     )
   })
 
-// Convert base64 to file
+//Convert base64 to file
 // async function dataUrlToFile(dataUrl, fileName) {
-//   const res = await fetch(dataUrl);
-//   const blob = await res.blob();
-//   return new File([blob], fileName, { type: 'image/png' });
+//   const res = await fetch(dataUrl)
+//   const blob = await res.blob()
+//   return new File([blob], fileName, { type: 'image/png' })
 // }
 
 const AvatarDialog = (props) => {

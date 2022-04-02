@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+/* eslint-disable */
+import React, { useContext, useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import useStyles from './styles'
 import { Grid } from '@mui/material'
@@ -10,7 +11,9 @@ import Button from '../../components/controls/Button'
 import Select from '../../components/controls/Select'
 import RadioGroup from '../../components/controls/RadioGroup'
 import { useForm } from '../../components/useForm'
-
+import Contexts from '../../contexts'
+import Controls from '../../components/controls/Controls'
+import NewRecipe from '../../components/recipe/NewRecipe'
 
 // A custom hook that builds on useLocation to parse
 // the query string for you.
@@ -24,7 +27,7 @@ const filterOptions = [
   { id: 2, title: 'Most likes' },
 ]
 const radioOptions = [
-  { id: 1, title: 'Salty' },
+  { id: 1, title: 'Savory' },
   { id: 2, title: 'Vegetarian' },
   { id: 3, title: 'Sweet' }
 ]
@@ -34,6 +37,8 @@ const index = () => {
   const classes = useStyles()
   const [recipes, setRecipes] = useState(null)
   const [filteredRecipes, setFilteredRecipes] = useState(null)
+  const [addNew, setAddNew] = useState(false)
+  const context = useContext(Contexts.UserContext)
 
   const { values, setValues, handleInputChange } = useForm({
     filter: '',
@@ -70,7 +75,6 @@ const index = () => {
   }, [])
 
   useEffect(() => {
-    console.log(recipes)
     if (values.searchText.startsWith('user::')) {
       const result = recipes?.filter(r => {
         return r.user.username.toLowerCase() === values.searchText.substring(6)
@@ -95,9 +99,13 @@ const index = () => {
     sessionStorage.setItem('scrollPositionRecipes', window.pageYOffset)
   }
 
+  const toggleAddNew = () => {
+    setAddNew(!addNew)
+  }
+
   return (
     <Grid container className={classes.root}>
-      <Grid className={classes.searchBox} item xs={12}>
+      { !addNew && <Grid className={classes.searchBox} item xs={12}>
         <Grid sx={{ display: 'flex', justifyContent: 'center' }} container direction="row">
           <Grid item>
             <Grid container>
@@ -107,13 +115,14 @@ const index = () => {
                 placeholder="Search recipes"
                 value={values.searchText}
                 onChange={handleInputChange} />
+              {context.user &&
               <Select
                 sx={{ minWidth: '10px' }}
                 name='filter'
                 label='Filter'
                 value={values.filter}
                 onChange={handleInputChange}
-                options={filterOptions} />
+                options={filterOptions} />}
             </Grid>
           </Grid>
           <Grid item>
@@ -124,8 +133,15 @@ const index = () => {
               items={radioOptions} />
           </Grid>
         </Grid>
+      </Grid> }
+      <Grid item xs={!addNew ? 12 : 0} className={classes.newRecipe}>
+        {addNew ?
+          <NewRecipe close={toggleAddNew}/>
+          :
+          <Controls.Button xs={12} sx={{ margin: '1.5em 0 0 2em' }} onClick={toggleAddNew} size="small" text="Add new" />
+        }
       </Grid>
-      {
+      { !addNew &&
         filteredRecipes?.map(r => (
           <Grid item key={r.id} xs={12} md={6} xl={4} align="center">
             <SimpleRecipe recipe={r}>
@@ -134,7 +150,7 @@ const index = () => {
           </Grid>
         ))
       }
-      <BackToTop />
+      {!addNew && <BackToTop />}
     </Grid>
   )
 }

@@ -50,7 +50,7 @@ const App = () => {
     userCtx && <Contexts.UserContext.Provider value={userCtx}>
       <ThemeProvider theme={LightTheme}>
         <CssBaseline/>
-        <Container disableGutters maxWidth="xl">
+        <Container disableGutters maxWidth='xl'>
           <NavBar />
           <Routes>
             <Route path="/info" element={<Info />} />

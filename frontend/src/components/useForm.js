@@ -1,4 +1,4 @@
-import React, { useState  } from 'react'
+import React, { useState } from 'react'
 import { makeStyles } from '@mui/styles'
 
 const useStyles = makeStyles(theme => ({
@@ -34,20 +34,39 @@ export const Form = (props) => {
 export const useForm = (initialValues) => {
 
   const handleInputChange = (e) => {
+
     const { name, value } = e.target
 
     // Uncheck radiobox on double click
     if (name === 'radioSelection' && values.radioSelection === value) {
       setValues({ ...values, [name]: '' })
+    // For array data previous data is parsed and new data is appended to it
+    } else if (name.startsWith('ingredients_')) {
+      const [table, row, type] = name.split('_')
+      const newData = values.ingredients.find(f => f.id.toString() === row.toString())
+      const newRow = { ...newData, [type]: value }
+      const newArray = values.ingredients.map(i => i.id.toString() === row.toString() ? newRow : i)
+      setValues({ ...values, [table]:newArray })
+    } else if (name.startsWith('steps_')) {
+      const [table, row, type] = name.split('_')
+      const newData = values.steps.find(f => f.id.toString() === row.toString())
+      const newRow = { ...newData, [type]: value }
+      const newArray = values.steps.map(i => i.id.toString() === row.toString() ? newRow : i)
+      setValues({ ...values, [table]:newArray })
     } else {
       setValues({ ...values, [name]:value })
     }
   }
 
   const [values, setValues] = useState(initialValues)
+  const originalValues = initialValues
+  const resetValues = () => {
+    setValues(originalValues)
+  }
   return {
     values,
     setValues,
-    handleInputChange
+    handleInputChange,
+    resetValues
   }
 }

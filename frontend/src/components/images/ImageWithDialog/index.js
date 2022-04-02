@@ -13,8 +13,8 @@ const useStyles = makeStyles(() => ({
 }))
 
 const index = ({ avatar, ...rest }) => {
-
   const { open, handleOpen, handleClose } = useDialog()
+
   const classes = useStyles()
 
   return (

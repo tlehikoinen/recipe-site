@@ -10,6 +10,7 @@ const index = ( { image, open, handleClose }) => {
       onClose={handleClose}>
       <img
         src={image}
+        className='img-dialog'
         alt="Imagess" />
     </Dialog>
   )

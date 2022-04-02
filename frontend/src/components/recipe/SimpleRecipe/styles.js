@@ -3,11 +3,10 @@ const recipeStyles = makeStyles((theme) => ({
   root: {
     marginTop: theme.spacing(4),
     justifyContent: 'center',
-    '& .MuiPaper-root:hover': {
+    '& .MuiPaper-root:hover, & .img-skip-click:hover': {
       boxShadow: '2px 4px 3px 5px'
     },
   },
-
   card: {
     width: '300px',
   },

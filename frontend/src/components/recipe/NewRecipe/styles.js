@@ -8,7 +8,10 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: '4px',
       marginTop: '1.3em',
       width: '8em',
-      height: '8em'
+      height: '8em',
+      '&:hover': {
+        boxShadow: '2px 4px 3px 5px'
+      }
     },
     '& .centered': {
       display: 'flex',

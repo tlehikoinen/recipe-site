@@ -1,11 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { CardContent, CardMedia, Dialog, DialogActions, DialogTitle, Grid, Typography } from '@mui/material'
 import Controls from '../../components/controls/Controls'
 import { makeStyles } from '@mui/styles'
 import BlankProfile from './blank_profile.png'
 import userServices from '../../services/userServices'
-
-import Resizer from 'react-image-file-resizer'
+import ImageLoader from '../../components/ImageLoader'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,37 +43,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const resizeFile = (file) =>
-  new Promise((resolve) => {
-    Resizer.imageFileResizer(
-      file,
-      1000,
-      1000,
-      'JPEG',
-      100,
-      0,
-      (uri) => {
-        resolve(uri)
-      },
-      'file'  // Output type, can be 'base64', 'blob', or 'file'
-    )
-  })
-
-//Convert base64 to file
-// async function dataUrlToFile(dataUrl, fileName) {
-//   const res = await fetch(dataUrl)
-//   const blob = await res.blob()
-//   return new File([blob], fileName, { type: 'image/png' })
-// }
-
 const AvatarDialog = (props) => {
   const { context, open, handleClose } = props
   const classes = useStyles()
-  const [file, setFile] = useState(null)
-  const [avatar, setAvatar] = useState(null)
-  const inputFile = useRef()
   const [displayImgError, setDisplayImgError] = useState('None')
   const [imgError, setImgError] = useState('Image was not supported')
+
+  const { file, inputFile, onChangeFile, avatar, setAvatar } = ImageLoader()
 
   useEffect(async () => {
     if (context.user.user.avatar.key === '') {
@@ -101,22 +76,6 @@ const AvatarDialog = (props) => {
       setTimeout(() => {
         setDisplayImgError('None')
       }, 2000)
-    }
-  }
-
-  const onChangeFile = async (e) => {
-    try {
-      const file = e.target.files[0]
-      if (file.size > 999999) { // 1 MB
-        const newFile = await resizeFile(file)  // Resize image
-        setFile(newFile)
-        setAvatar(URL.createObjectURL(newFile))
-      } else {  // No need to resize
-        setFile(file)
-        setAvatar(URL.createObjectURL(file))
-      }
-    } catch(err) {
-      console.log(err)
     }
   }
 

@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import useStyles from './styles'
@@ -87,7 +86,7 @@ const index = () => {
     } else {
       const result = recipes?.filter(r => {
         return r.title.toLowerCase().includes(values.searchText.toLowerCase())
-          && (r.course === values.radioSelection.toLowerCase() || values.radioSelection === '')
+          && (r.course.toLowerCase() === values.radioSelection.toLowerCase() || values.radioSelection === '')
       })
 
       // TODO: Filter drop down selections (following, most likes etc...)
@@ -105,7 +104,7 @@ const index = () => {
 
   return (
     <Grid container className={classes.root}>
-      { !addNew && <Grid className={classes.searchBox} item xs={12}>
+      { !addNew && <Grid className={classes.searchBox}>
         <Grid sx={{ display: 'flex', justifyContent: 'center' }} container direction="row">
           <Grid item>
             <Grid container>
@@ -113,11 +112,10 @@ const index = () => {
                 label="Search"
                 name="searchText"
                 placeholder="Search recipes"
-                value={values.searchText}
-                onChange={handleInputChange} />
+                onChange={handleInputChange}
+                value={values.searchText} />
               {context.user &&
               <Select
-                sx={{ minWidth: '10px' }}
                 name='filter'
                 label='Filter'
                 value={values.filter}
@@ -125,11 +123,11 @@ const index = () => {
                 options={filterOptions} />}
             </Grid>
           </Grid>
-          <Grid item>
+          <Grid item sx={{ minWidth: '340px' }}>
             <RadioGroup
+              onChange={handleInputChange}
               name="radioSelection"
               value={values.radioSelection}
-              onChange={handleInputChange}
               items={radioOptions} />
           </Grid>
         </Grid>

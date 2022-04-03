@@ -23,6 +23,7 @@ import { ThemeProvider } from '@mui/material'
 import { CssBaseline } from '@mui/material'
 
 import UserServices from './services/userServices'
+import recipeServices from './services/recipeServices'
 
 const App = () => {
   // const [theme, setTheme] = useState(LightTheme)
@@ -41,6 +42,7 @@ const App = () => {
       if (user) {
         console.log(Object.entries(user))
         UserServices.setToken(user.token)
+        recipeServices.setToken(user.token)
       }
       setUser(user)
     }

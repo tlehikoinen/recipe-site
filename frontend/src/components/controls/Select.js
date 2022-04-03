@@ -1,9 +1,9 @@
-import { FormControl, InputLabel, MenuItem, Select as MuiSelect } from '@mui/material'
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select as MuiSelect } from '@mui/material'
 import React from 'react'
 
 const Select = (props) => {
 
-  const { name, label, value, onChange, options, showNone=true, size, ...others } = props
+  const { name, label, value, onChange, options, showNone=true, size, helperText, ...others } = props
 
 
   return (
@@ -25,7 +25,7 @@ const Select = (props) => {
         }
 
       </MuiSelect>
-
+      <FormHelperText error={Boolean(helperText)}>{helperText}</FormHelperText>
     </FormControl>
   )
 }

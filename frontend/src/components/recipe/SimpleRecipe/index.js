@@ -20,7 +20,7 @@ const SimpleRecipe = ({ recipe, children }) => {
     if (recipe.avatar.key === '') {
       setAvatar(generateFoodAvatar(recipe.course))
     } else {
-      setAvatar(`/api/users/avatars/${recipe.avatar.id}`)  // Avatar points to API endpoint (get request, returns image as a stream)
+      setAvatar(`/api/recipes/avatars/${recipe.id}`)  // Avatar points to API endpoint (get request, returns image as a stream)
     }
   },[])
 
@@ -49,14 +49,14 @@ const SimpleRecipe = ({ recipe, children }) => {
             </Grid>
             <Grid item>
               <Grid container direction='row'>
-                <Grid item xs={5} onClick={(e) => toggleImgDialogOpen(e)} >
+                <Grid item xs={4} onClick={(e) => toggleImgDialogOpen(e)} >
                   <ImageWithDialog className='img-skip-click' avatar={avatar} alt={'s avatar'} loading="lazy" />
                 </Grid>
-                <Grid item xs={7} className={classes.recipeInfo}>
+                <Grid item xs={8} className={classes.recipeInfo}>
                   <Box display='flex' flexDirection={'column'}>
                     <Typography>Likes: {recipe.likes}</Typography>
                     <Typography>Difficulty: {recipe.difficulty}</Typography>
-                    <Typography noWrap={true}>Time: {recipe.timeEstimate.value} {recipe.timeEstimate.timeUnit}</Typography>
+                    <Typography noWrap={true}>Time: {recipe.timeEstimate.value} {recipe.timeEstimate.unit}</Typography>
                   </Box>
                 </Grid>
               </Grid>

@@ -1,7 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { AppBar, Box, Button, IconButton, InputBase, Menu, MenuItem, Paper, Toolbar, Typography } from '@mui/material'
-import { makeStyles } from '@mui/styles'
-import SearchIcon from '@mui/icons-material/Search'
+import { AppBar, Box, Button, Grid, IconButton, Menu, MenuItem, Paper, Toolbar, Typography } from '@mui/material'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import MenuIcon from '@mui/icons-material/Menu'
 import { Link } from 'react-router-dom'
@@ -25,33 +23,6 @@ const loginPages = [
   { name: 'sign up', url:'/signup' }
 ]
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    position: 'relative',
-    left: '35%'
-  },
-  leftItems: {
-    '& .MuiInputBase-root': {
-      paddingLeft: '10px'
-    },
-  },
-  searchInput: {
-    opacity:'0.6',
-    padding:'0px 4px',
-    marginLeft: '4px',
-    fontSize:'0.8rem',
-    minWidth: '10%',
-    maxWidth: '30%',
-    '&:hover':{
-      backgroundColor: theme.palette.primary.light,
-      borderRadius: '10px'
-    },
-    '& .MuiSvgIcon-root': {
-      marginRight: '8px'
-    }
-  },
-}))
-
 const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = useState(null)
   const [anchorElUserMenu, setAnchorElUserMenu] = useState(null)
@@ -72,7 +43,7 @@ const NavBar = () => {
     setAnchorElUserMenu(null)
   }
 
-  const classes = useStyles()
+  //const classes = useStyles()
 
   const { user } = useContext(Contexts.UserContext)
 
@@ -116,25 +87,30 @@ const NavBar = () => {
               ))}
             </Menu>
           </Box>
-          <Typography variant='h5'>Recipes</Typography>
-          <InputBase
-            className={classes.searchInput}
-            placeholder="Search"
-            startAdornment={<SearchIcon fontSize="small" />}
-          />
-          <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page.name}
-                component={Link} to={page.url}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page.name}
-              </Button>
-            ))}
-          </Box>
+          <Typography
+            sx={{ textDecoration: 'none', boxShadow: 'none' }}
+            variant="h5"
+            component={Link}
+            to="/"
+            color="textPrimary">
+              Recipes
+          </Typography>
 
-          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', background:'#123' }} />  { /* Forces items in box below to right */ }
+          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
+              {pages.map((page) => (
+                <Button
+                  key={page.name}
+                  component={Link} to={page.url}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                  {page.name}
+                </Button>
+              ))}
+            </Box>
+          </Grid>
+
+          <Box sx={{ flexGrow: 1, display: 'flex' }} />  { /* Forces items in box below to right */ }
           <Box>
             <IconButton
               size="large"

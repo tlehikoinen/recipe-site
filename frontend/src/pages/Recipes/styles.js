@@ -51,9 +51,7 @@ const useStyles = makeStyles((theme) => ({
       justifyContent: 'center'
     },
     '& .MuiFormControl-root': {
-      [theme.breakpoints.up(450)]: {
-        marginLeft: '10px'
-      }
+      marginLeft: '10px'
     }
   },
   newRecipe: {

@@ -8,7 +8,12 @@ const recipeStyles = makeStyles((theme) => ({
     },
   },
   card: {
-    width: '300px',
+    width: '320px',
+    '& .MuiCardMedia-root': {
+      borderRadius: '4px',
+      height: '100%',
+      width: '100%'
+    },
   },
   recipeInfo: {
     marginTop: '1em !important',

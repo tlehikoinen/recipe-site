@@ -31,11 +31,18 @@ export const Form = (props) => {
   )
 }
 
-export const useForm = (initialValues) => {
+export const useForm = (initialValues, validationData) => {
 
   const handleInputChange = (e) => {
-
     const { name, value } = e.target
+
+    // onClick listener on radiogroup calls this function twice, first time with undefined values, return in this case
+    if (name === undefined) {
+      return
+    }
+    if (validationData !== undefined) {
+      clearValidations(name)
+    }
 
     // Uncheck radiobox on double click
     if (name === 'radioSelection' && values.radioSelection === value) {
@@ -57,8 +64,13 @@ export const useForm = (initialValues) => {
       setValues({ ...values, [name]:value })
     }
   }
+  const clearValidations = (name) =>  {
+    const newValidationData = { ...validation, [name]: { ...validation[name], error: false } }
+    setValidation(newValidationData)
+  }
 
   const [values, setValues] = useState(initialValues)
+  const [validation, setValidation] = React.useState(validationData)
   const originalValues = initialValues
   const resetValues = () => {
     setValues(originalValues)
@@ -67,6 +79,8 @@ export const useForm = (initialValues) => {
     values,
     setValues,
     handleInputChange,
-    resetValues
+    resetValues,
+    validation,
+    setValidation
   }
 }

@@ -38,10 +38,13 @@ const RecipeSchema = new Schema({
     },
     required: true
   },
-  likes: {
-    type: Number,
-    default: 0
-  },
+  // Likers store array of users
+  likers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    }
+  ],
   avatar: {
     type: Object,
     default: {

@@ -9,6 +9,7 @@ const multer = require('multer')
 const fs = require('fs')
 
 const { uploadFile, getFileStream, deleteFile } = require('../../utils/s3')
+const ObjectId = require('mongodb').ObjectId
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -101,11 +102,92 @@ router.get('/avatars/:id', async (req, res, next) => {
   }
 })
 
+router.put('/:id/likes', middleware.userExtractor, async (req, res, next) => {
+  const reqUser = req.user
+  try {
+    // Requesting user
+    const userInDb = await User.findById(reqUser.id)
+
+    // Create object id and compare it with users previously liked recipes. Only one like per user will be accepted
+    const recipeObjectId = new ObjectId(req.params.id)
+    if (userInDb.likedRecipes.includes(recipeObjectId)) {
+      const error = { code: 400, message: 'User had already given like to this recipe' }
+      console.log('already liked')
+      return next(error)
+    }
+
+    // Add recipe to users likedRecipes
+    const updatedUser = {
+      ...userInDb, likedRecipes: userInDb.likedRecipes.push(req.params.id)
+    }
+    const newUser = await User.findByIdAndUpdate(reqUser.id, updatedUser, { new: true })
+
+    // Add like to recipes likers
+    const recipeInDb = await Recipe.findById(req.params.id)
+
+    const updatedRecipe = {
+      ...recipeInDb, likes: recipeInDb.likers.push(reqUser.id)
+    }
+
+    const newRecipe = await Recipe.findByIdAndUpdate(req.params.id, updatedRecipe, { new: true })
+
+    res.status(200).json({ user: newUser, recipe: newRecipe })
+  } catch(e) {
+    next(e)
+  }
+})
+
+router.delete('/:id/likes', middleware.userExtractor, async (req, res, next) => {
+  try {
+    // Delete like from user
+    const newUser = await User.findByIdAndUpdate(
+      req.user.id,
+      { '$pull': { 'likedRecipes': req.params.id } }, { new: true })
+
+    // Delete like from recipe
+    const newRecipe = await Recipe.findByIdAndUpdate(
+      req.params.id,
+      { '$pull': { 'likers': req.user.id } }, { new: true })   // Delete liker from the recipe
+
+    res.status(200).send({ user: newUser, recipe: newRecipe })
+
+  } catch(e) {
+    next(e)
+  }
+})
+
+router.get('/:id/likes', async (req, res, next) => {
+  try {
+    const likesWithUsers = await Recipe.findById(req.params.id).populate('likers')
+    console.log(likesWithUsers)
+    res.status(200).json(likesWithUsers)
+  } catch(e) {
+    next(e)
+  }
+})
+
+router.get('/:id', async (req, res, next) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id).populate('user')
+    if (!recipe) {
+      return res.status(404).json({ error: 'Not found' } )
+    } else {
+      return res.status(200).json(recipe)
+    }
+  } catch(e) {
+    next(e)
+  }
+})
+
 
 router.get('/', async (req, res, next) => {
-  const recipe = await Recipe.find().populate('user')
-  logger.info(recipe)
-  return res.status(200).json(recipe)
+  try {
+    const recipe = await Recipe.find().populate('user')
+    logger.info(recipe)
+    return res.status(200).json(recipe)
+  } catch(e) {
+    return next(e)
+  }
 })
 
 router.post('/', middleware.userExtractor, async (req, res, next) => {

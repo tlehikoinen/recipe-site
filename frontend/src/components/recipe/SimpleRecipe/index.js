@@ -17,6 +17,7 @@ const SimpleRecipe = ({ recipe, children }) => {
   const [imgDialogOpen, setImgDialogOpen] = useState(false)
 
   useEffect(async () => {
+    // TODO, async?
     if (recipe.avatar.key === '') {
       setAvatar(generateFoodAvatar(recipe.course))
     } else {
@@ -54,7 +55,7 @@ const SimpleRecipe = ({ recipe, children }) => {
                 </Grid>
                 <Grid item xs={8} className={classes.recipeInfo}>
                   <Box display='flex' flexDirection={'column'}>
-                    <Typography>Likes: {recipe.likes}</Typography>
+                    <Typography>Likes: {recipe.likers.length}</Typography>
                     <Typography>Difficulty: {recipe.difficulty}</Typography>
                     <Typography noWrap={true}>Time: {recipe.timeEstimate.value} {recipe.timeEstimate.unit}</Typography>
                   </Box>

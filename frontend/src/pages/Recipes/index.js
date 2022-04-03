@@ -1,12 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import useStyles from './styles'
 import { Grid } from '@mui/material'
 import BackToTop from '../../components/BackToTop'
 import SimpleRecipe from '../../components/recipe/SimpleRecipe'
 import RecipeServices from '../../services/recipeServices'
 import SearchBox from '../../components/SearchBox'
-import Button from '../../components/controls/Button'
 import Select from '../../components/controls/Select'
 import RadioGroup from '../../components/controls/RadioGroup'
 import { useForm } from '../../components/useForm'
@@ -76,8 +75,8 @@ const index = () => {
   useEffect(() => {
     if (values.searchText.startsWith('user::')) {
       const result = recipes?.filter(r => {
-        return r.user.username.toLowerCase() === values.searchText.substring(6)
-          && (r.course === values.radioSelection.toLowerCase() || values.radioSelection === '')
+        return r.user?.username.toLowerCase() === values.searchText.substring(6)
+          && (r.course.toLowerCase() === values.radioSelection.toLowerCase() || values.radioSelection === '')
       })
 
       // TODO: Filter drop down selections (following, most likes etc...)
@@ -134,17 +133,17 @@ const index = () => {
       </Grid> }
       <Grid item xs={!addNew ? 12 : 0} className={classes.newRecipe}>
         {addNew ?
-          <NewRecipe close={toggleAddNew}/>
+          context.user && <NewRecipe close={toggleAddNew}/>
           :
-          <Controls.Button xs={12} sx={{ margin: '1.5em 0 0 2em' }} onClick={toggleAddNew} size="small" text="Add new" />
+          context.user && <Controls.Button xs={12} sx={{ margin: '1.5em 0 0 2em' }} onClick={toggleAddNew} size="small" text="Add new" />
         }
       </Grid>
       { !addNew &&
         filteredRecipes?.map(r => (
-          <Grid item key={r.id} xs={12} md={6} xl={4} align="center">
-            <SimpleRecipe recipe={r}>
-              <Button size="small" onClick={handleClick} text="Open" sx={{ margin: '0.2em' }} component={Link} to={`/recipes/${r.id}`} ></Button>
-            </SimpleRecipe>
+          <Grid item key={r.id} xs={12} md={6} xl={4} align="center" onClick={handleClick}>
+            <SimpleRecipe recipe={r} />
+            { /* <Button size="small" onClick={handleClick} text="Open" sx={{ margin: '0.2em' }} component={Link} to={`/recipes/${r.id}`} ></Button>
+            </SimpleRecipe> */ }
           </Grid>
         ))
       }

@@ -1,6 +1,5 @@
-//import { orange, green } from '@mui/material/colors'
 import { createTheme } from '@mui/material/styles'
-import { orange, purple } from '@mui/material/colors'
+//import { orange, purple } from '@mui/material/colors'
 
 
 export const DarkTheme = createTheme({
@@ -12,11 +11,11 @@ export const DarkTheme = createTheme({
 export const LightTheme = createTheme({
   palette: {
     mode: 'light',
-    primary: {
-      main: orange[600],
-    },
-    secondary: {
-      main: purple[300],
-    }
+    // primary: {
+    //   //main: orange[600],
+    // },
+    // secondary: {
+    //   //main: purple[300],
+    // }
   },
 })

@@ -72,11 +72,17 @@ const index = ({ close }) => {
     const convertedValues = { ...values, timeEstimate: { value: value, unit: unit } }
     const res = await recipeServices.addRecipe(convertedValues)
     console.log(res)
-    if (res.status !== 200) {
-      console.log(res.data.error)
+    if (res.status === 200) {
+      if (file) {
+        const imgRes = await recipeServices.postAvatar(res.data.id, file)
+        console.log(imgRes)
+      }
+      close()
+    } else {
+      console.log(res)
       // Error data for validation is in form: '{Schema} validation failed: error message for `field`, error message for `field2`...
       // Parse each message by splitting at comma (,), slice error field by using gravis (`) characters
-      if (res.data.error.startsWith('Recipe validation failed:')) {
+      if (res?.data?.error.startsWith('Recipe validation failed:')) {
         const errorFields = res.data.error
           .split(',')
           .map(f => f.slice(f.indexOf('`') +1, f.lastIndexOf('`')).toLowerCase())
@@ -89,13 +95,6 @@ const index = ({ close }) => {
 
         setValidation(newValidationData)
       }
-    } else {
-      if (file) {
-        const imgRes = await recipeServices.postAvatar(res.data.id, file)
-        console.log(imgRes)
-      }
-
-      close()
     }
   }
 

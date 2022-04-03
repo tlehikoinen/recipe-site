@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
-import Todo from './pages/Todo'
+import Home from './pages/Home'
 import Info from './pages/Info'
 import Login from './pages/Login'
 import LogOut from './pages/LogOut'
 import Profile from './pages/Profile'
 import Recipes from './pages/Recipes'
+import Recipe from './pages/Recipe'
 import SignUp from './pages/SignUp'
 import UserProfiles from './pages/UserProfiles'
 import UserProfile from './pages/UserProfile'
@@ -18,12 +19,13 @@ import './App.css'
 
 import Contexts from './contexts'
 
-import { LightTheme } from './styles/themes'
+/* eslint-disable-next-line */
+import { DarkTheme, LightTheme } from './styles/themes'
 import { ThemeProvider } from '@mui/material'
 import { CssBaseline } from '@mui/material'
 
 import UserServices from './services/userServices'
-import recipeServices from './services/recipeServices'
+import RecipeServices from './services/recipeServices'
 
 const App = () => {
   // const [theme, setTheme] = useState(LightTheme)
@@ -42,7 +44,7 @@ const App = () => {
       if (user) {
         console.log(Object.entries(user))
         UserServices.setToken(user.token)
-        recipeServices.setToken(user.token)
+        RecipeServices.setToken(user.token)
       }
       setUser(user)
     }
@@ -60,10 +62,11 @@ const App = () => {
             <Route path="/logout" element={<LogOut />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/recipes" element={<Recipes />} />
+            <Route path="/recipes/:id" element={<Recipe />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/users" element={<UserProfiles />} />
             <Route path="/users/:id" element={<UserProfile />} />
-            <Route path="/" element={<Todo />} />
+            <Route path="/" element={<Home />} />
             <Route path="/*" element={<Unknown />} />
           </Routes>
           <Footer />

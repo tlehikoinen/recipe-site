@@ -5,6 +5,7 @@ import * as yup from 'yup'
 import { Form } from '../../components/useForm'
 
 import UserServices from '../../services/userServices'
+import RecipeServices from '../../services/recipeServices'
 import Contexts from '../../contexts'
 
 import Controls from '../../components/controls/Controls'
@@ -28,6 +29,7 @@ const LoginForm = () => {
   const handleLogin = (data) => {
     window.localStorage.setItem('userJson', JSON.stringify(data))
     UserServices.setToken(data.token)
+    RecipeServices.setToken(data.token)
     setUser(data)
     history('/home')
   }

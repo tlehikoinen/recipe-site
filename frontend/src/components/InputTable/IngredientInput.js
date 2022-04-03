@@ -18,7 +18,8 @@ const unitOptions = [
   { id: 4, title: 'dl' },
   { id: 5, title: 'l' },
   { id: 6, title: 'g' },
-  { id: 7, title: 'kg' }
+  { id: 7, title: 'kg' },
+  { id: 8, title: 'pcs.' }
 ]
 
 const useStyles = makeStyles(theme => ({

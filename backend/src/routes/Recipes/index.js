@@ -4,6 +4,7 @@ const middleware = require('../../utils/middleware')
 const logger = require('../../utils/logger')
 const Recipe = require('../../models/recipe')
 const User = require('../../models/user')
+const Comment = require('../../models/comment')
 const path = require('path')
 const multer = require('multer')
 const fs = require('fs')
@@ -168,12 +169,47 @@ router.get('/:id/likes', async (req, res, next) => {
 
 router.get('/:id', async (req, res, next) => {
   try {
-    const recipe = await Recipe.findById(req.params.id).populate('user')
+    // This is an example of nested population
+    // const recipe = await Recipe.findById(req.params.id).populate('user').populate({path: 'comments', populate:('user') })
+    const recipe = await Recipe.findById(req.params.id).populate('user').populate('comments')
     if (!recipe) {
       return res.status(404).json({ error: 'Not found' } )
     } else {
       return res.status(200).json(recipe)
     }
+  } catch(e) {
+    next(e)
+  }
+})
+
+router.delete('/:id', middleware.userExtractor, async (req, res, next) => {
+  try {
+    const userInDb = await User.findById(req.user.id)
+    const recipeInDb = await Recipe.findById(req.params.id)
+
+    const allowDelete = userInDb && recipeInDb
+      ? recipeInDb.user.toString() === userInDb.id.toString()
+      : false
+
+    if (allowDelete) {
+      // Delete recipe
+      await Recipe.findByIdAndDelete(recipeInDb.id)
+
+      // Delete user reference
+      const newUser = await User.findByIdAndUpdate(userInDb.id,
+        { '$pull': { 'recipes': recipeInDb.id } }, { new: true })
+
+
+      console.log(newUser)
+
+      res.status(202).json({ user: newUser } )
+
+      console.log('delete allowed')
+    } else {
+      res.status(401).send('delete not allowed')
+      console.log('delete not allowed')
+    }
+
   } catch(e) {
     next(e)
   }
@@ -191,14 +227,9 @@ router.get('/', async (req, res, next) => {
 })
 
 router.post('/', middleware.userExtractor, async (req, res, next) => {
-  // const recipe = req.body
-  // logger.info(recipe)
-
   const user = req.user
-  console.log(user.id)
   try {
     const userInDb = await User.findById(user.id)
-    console.log(userInDb)
 
     if (!userInDb) {
       const error = { name: 'ValidationError', message: 'Not logged in' }
@@ -222,15 +253,48 @@ router.post('/', middleware.userExtractor, async (req, res, next) => {
 
       res.status(200).json(savedRecipe)
     }
-
-
-
-
   } catch(e) {
     return next(e)
   }
-
-
 })
+
+router.post('/:id/comments', middleware.userExtractor, async (req, res, next) => {
+  try {
+    const recipeInDb = await Recipe.findById(req.params.id)
+
+    const comment = new Comment({
+      user: req.user.id,
+      username: req.user.username,
+      recipe: recipeInDb.id,
+      comment: req.body.comment
+    })
+    const savedComment = await comment.save()
+    recipeInDb.comments = recipeInDb.comments.concat(savedComment.id)
+    recipeInDb.save()
+    res.status(202).send('Okei')
+  } catch(e) {
+    next(e)
+  }
+})
+
+router.delete('/:id/comments', middleware.userExtractor, async (req, res, next) => {
+  try {
+    const commentInDb = await Comment.findById(req.params.id).populate('recipe')
+
+    // Delete comment
+    await Comment.findByIdAndDelete(req.params.id)
+
+    // Delete comment reference from recipe
+    const newRecipe = await Recipe.findByIdAndUpdate(commentInDb.recipe.id,
+      { '$pull': { 'comments': req.params.id } }, { new: true })
+
+    console.log(newRecipe)
+
+    res.status(202).send('Okei')
+  } catch(e) {
+    next(e)
+  }
+})
+
 
 module.exports = router

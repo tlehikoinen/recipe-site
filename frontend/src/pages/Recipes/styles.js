@@ -7,6 +7,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     paddingLeft: '15%',
     paddingRight: '15%',
+    marginBottom: '200px',
     '& .backToTopBtn': {
       margin: 'auto',
       bottom: '50px',

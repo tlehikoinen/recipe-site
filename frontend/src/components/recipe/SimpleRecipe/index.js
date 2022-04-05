@@ -50,10 +50,10 @@ const SimpleRecipe = ({ recipe, children }) => {
             </Grid>
             <Grid item>
               <Grid container direction='row'>
-                <Grid item xs={4} onClick={(e) => toggleImgDialogOpen(e)} >
+                <Grid item xs={6} onClick={(e) => toggleImgDialogOpen(e)} >
                   <ImageWithDialog className='img-skip-click' avatar={avatar} alt={'s avatar'} loading="lazy" />
                 </Grid>
-                <Grid item xs={8} className={classes.recipeInfo}>
+                <Grid item xs={6} className={classes.recipeInfo}>
                   <Box display='flex' flexDirection={'column'}>
                     <Typography>Likes: {recipe.likers.length}</Typography>
                     <Typography>Difficulty: {recipe.difficulty}</Typography>

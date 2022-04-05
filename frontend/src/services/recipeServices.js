@@ -30,6 +30,16 @@ const addRecipe = async (recipe) => {
   return response
 }
 
+const deleteRecipe = async (id) => {
+  const config = { headers: { Authorization : token } }
+  const response = await axios.delete(`${baseUrl}/recipes/${id}`, config)
+    .catch((error) => {
+      const { response } = error
+      return response
+    })
+  return response
+}
+
 const getRecipe = async (id) => {
   const response = await axios.get(`${baseUrl}/recipes/${id}`)
     .catch((error) => {
@@ -53,6 +63,26 @@ const postAvatar = async (recipeId, avatar) => {
   return response
 }
 
+const deleteComment = async (id) => {
+  const config = { headers: { Authorization : token } }
+  const response = await axios.delete(`${baseUrl}/recipes/${id}/comments`, config)
+    .catch((error) => {
+      const { response } = error
+      return response
+    })
+  return response
+}
+
+const postComment = async (recipeId, comment) => {
+  const config = { headers: { Authorization : token } }
+  const response = await axios.post(`${baseUrl}/recipes/${recipeId}/comments`, { comment }, config)
+    .catch((error) => {
+      const { response } = error
+      return response
+    })
+  return response
+}
+
 const removeLike = async (id) => {
   const config = { headers: { Authorization : token } }
   const response = await axios.delete(`${baseUrl}/recipes/${id}/likes`, config)
@@ -64,4 +94,4 @@ const removeLike = async (id) => {
 }
 
 
-export default { addLike, addRecipe, getRecipe, getRecipes, postAvatar, removeLike, setToken }
+export default { addLike, addRecipe, deleteComment, deleteRecipe, getRecipe, getRecipes, postAvatar, postComment, removeLike, setToken }

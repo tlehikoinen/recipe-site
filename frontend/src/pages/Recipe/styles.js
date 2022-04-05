@@ -3,6 +3,7 @@ import { makeStyles } from '@mui/styles'
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    marginBottom: '200px',
     marginTop: '1em',
     display: 'flex',
     justifyContent: 'center',
@@ -19,6 +20,14 @@ const useStyles = makeStyles((theme) => ({
         width: '150px',
         height: '150px',
         borderRadius: '4px'
+      }
+    },
+    '& .backToTopBtn': {
+      margin: 'auto',
+      bottom: '50px',
+      marginRight: '-270px',
+      [theme.breakpoints.up(480)]: {
+        marginRight: '-400px',
       }
     },
   },

@@ -55,7 +55,13 @@ const RecipeSchema = new Schema({
   servings: {
     type: Number,
     required: false
-  }
+  },
+  comments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Comment'
+    }
+  ]
 })
 
 RecipeSchema.set('toJSON', {

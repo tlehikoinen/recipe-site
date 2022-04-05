@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
 import Controls from '../../components/controls/Controls'
 import UserServices from '../../services/userServices'
-import { useNavigate } from 'react-router-dom'
 import { makeStyles } from '@mui/styles'
 
 const useStyles = makeStyles((theme) => ({

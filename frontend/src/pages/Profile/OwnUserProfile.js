@@ -9,6 +9,7 @@ import AvatarDialog from './AvatarDialog'
 import ConfirmDeleteDialog from './ConfirmDeleteDialog'
 import DescriptionDialog from './DescriptionDialog'
 import ImageWithDialog from '../../components/images/ImageWithDialog'
+import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -107,7 +108,7 @@ const OwnUserProfile = ({ context }) => {
             </Grid>
             <Grid item>
               <CardContent>
-                <Controls.Button size='small' text='Recipes'/>
+                <Controls.Button size='small' text='Recipes' disabled={context.user.user.recipes.length === 0} component={Link} to={`/recipes/?user=${context.user.user.username}`} />
               </CardContent>
             </Grid>
             <Grid item>

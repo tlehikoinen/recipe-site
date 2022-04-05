@@ -51,7 +51,7 @@ const App = () => {
   }, [])
 
   return (
-    userCtx && <Contexts.UserContext.Provider value={userCtx}>
+    <Contexts.UserContext.Provider value={userCtx}>
       <ThemeProvider theme={LightTheme}>
         <CssBaseline/>
         <Container disableGutters maxWidth='xl'>

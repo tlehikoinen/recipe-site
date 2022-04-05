@@ -31,7 +31,7 @@ const LoginForm = () => {
     UserServices.setToken(data.token)
     RecipeServices.setToken(data.token)
     setUser(data)
-    history('/home')
+    history('/')
   }
   const formik = useFormik({
     initialValues: {

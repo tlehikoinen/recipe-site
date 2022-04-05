@@ -23,7 +23,7 @@ const UserProfile = ({ user, children }) => {
       <Card className={classes.card}>
         <CardContent>
           <Grid container>
-            <Grid item xs={5}>
+            <Grid item xs={6}>
               <CardContent>
                 <ImageWithDialog avatar={avatar} />
                 {/* <CardMedia
@@ -32,7 +32,7 @@ const UserProfile = ({ user, children }) => {
                   src={avatar} /> */}
               </CardContent>
             </Grid>
-            <Grid item xs={7}>
+            <Grid item xs={6}>
               <CardContent>
                 <Box display='flex' flexDirection={'column'}>
                   <Box>

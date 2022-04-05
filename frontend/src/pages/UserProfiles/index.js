@@ -13,6 +13,7 @@ import { useForm } from '../../components/useForm'
 const useStyles = makeStyles((theme) => ({
   root: {
     justifyContent: 'center',
+    marginBottom: '200px',
     '& .backToTopBtn': {
       margin: 'auto',
       bottom: '50px',
@@ -88,7 +89,7 @@ const index = () => {
             <CommonProfile  user={u}>
               <Box display="flex" flexDirection="row" justifyContent='space-evenly' onClick={handleClick}>
                 <Controls.Button size="small" text="Profile" component={Link} to={context.user?.user.id === u.id ? '/profile' : `/users/${u.id}`} />
-                <Controls.Button disabled={u.recipes.length === 0}size="small" text="Recipes" component={Link} to={`/recipes/?user=${u.username}`} />
+                <Controls.Button disabled={u.recipes.length === 0 } size="small" text="Recipes" component={Link} to={`/recipes/?user=${u.username}`} />
               </Box>
             </CommonProfile>
           </Grid>

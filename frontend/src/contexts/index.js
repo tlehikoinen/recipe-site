@@ -1,7 +1,9 @@
 import UserContext from './UserContext'
+import PageInfoContext from './PageInfoContext'
 
 const Contexts = {
-  UserContext
+  UserContext,
+  PageInfoContext
 }
 
 export default Contexts

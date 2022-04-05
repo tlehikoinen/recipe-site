@@ -12,10 +12,10 @@ export const LightTheme = createTheme({
   palette: {
     mode: 'light',
     // primary: {
-    //   //main: orange[600],
+    //   main: orange[600],
     // },
     // secondary: {
-    //   //main: purple[300],
+    //   main: purple[300],
     // }
   },
 })

@@ -20,7 +20,8 @@ const userPages = [
 
 const loginPages = [
   { name: 'login', url:'/login' },
-  { name: 'sign up', url:'/signup' }
+  { name: 'sign up', url:'/signup' },
+  { name: 'settings', url:'/settings' }
 ]
 
 const NavBar = () => {

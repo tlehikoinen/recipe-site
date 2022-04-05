@@ -1,5 +1,9 @@
+/* eslint-disable */
 import React, { useEffect, useState } from 'react'
 import Controls from './controls/Controls'
+import UpIcon from '@mui/icons-material/KeyboardArrowUp'
+import Fab from '@mui/material/Fab'
+import { green } from '@mui/material/colors';
 
 const BackToTop = ( { windowOffsetLimit }) => {
   const [showButton, setShowButton] = useState(false)
@@ -27,7 +31,10 @@ const BackToTop = ( { windowOffsetLimit }) => {
   }, [showButton])
   return (
     <>
-      {showButton && <Controls.Button onClick={scrollToTop} className='backToTopBtn' text="Top!" sx={{ position: 'fixed' }}/>}
+      {showButton &&
+      <Fab color='primary' className='backToTopBtn' sx={{ position: 'fixed' }} onClick={scrollToTop} >
+        <UpIcon/>
+      </Fab> }
     </>
   )
 }

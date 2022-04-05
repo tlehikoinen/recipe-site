@@ -232,6 +232,16 @@ router.put('/:id', middleware.userExtractor, async (req, res, next) => {
   }
 })
 
+router.put('/:id/theme', middleware.userExtractor, async (req, res, next) => {
+  try {
+    await User.findByIdAndUpdate(req.user.id, { theme: req.body.theme })
+    res.status(202).send('ok')
+  } catch(e) {
+    next(e)
+  }
+
+})
+
 
 module.exports = router
 

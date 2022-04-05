@@ -85,12 +85,12 @@ const OwnUserProfile = ({ context }) => {
       { !showEdit?
         <CardContent>
           <Grid container>
-            <Grid item xs={5}>
+            <Grid item xs={6}>
               <CardContent>
                 <ImageWithDialog avatar={avatar} />
               </CardContent>
             </Grid>
-            <Grid item xs={7}>
+            <Grid item xs={6}>
               <CardContent>
                 <Box display='flex' flexDirection={'column'}>
                   <Typography variant='h6'>{context.user.user.username}</Typography>

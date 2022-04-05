@@ -24,12 +24,14 @@ const validationSchema = yup.object({
 const LoginForm = () => {
 
   const { setUser } = useContext(Contexts.UserContext)
+  const { changeTheme } = useContext(Contexts.PageInfoContext)
   const history = useNavigate()
 
   const handleLogin = (data) => {
     window.localStorage.setItem('userJson', JSON.stringify(data))
     UserServices.setToken(data.token)
     RecipeServices.setToken(data.token)
+    changeTheme(data.user.theme)
     setUser(data)
     history('/')
   }

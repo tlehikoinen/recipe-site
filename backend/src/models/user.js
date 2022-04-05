@@ -63,7 +63,11 @@ const UserSchema = new Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Recipe'
     }
-  ]
+  ],
+  theme: {
+    type: String,
+    default: 'light',
+  }
 
 })
 

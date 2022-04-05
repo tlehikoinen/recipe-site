@@ -95,6 +95,16 @@ const signUp = async(user) => {
   return response
 }
 
-export default { addFollow, deleteFollow, deleteUserWithConfirmation, getAvatar, getUser, getUsers, login, postAvatar, setToken, signUp, updateDescription }
+const updateTheme = async (id, theme) => {
+  const config = { headers: { Authorization : token } }
+  const response = await axios.put(`${baseUrl}/users/${id}/theme`, { theme }, config)
+    .catch((error) => {
+      const { response } = error
+      return response
+    })
+  return response
+}
+
+export default { addFollow, deleteFollow, deleteUserWithConfirmation, getAvatar, getUser, getUsers, login, postAvatar, setToken, signUp, updateDescription, updateTheme }
 
 

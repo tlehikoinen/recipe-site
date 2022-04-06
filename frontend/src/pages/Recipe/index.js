@@ -11,12 +11,13 @@ import RecipeInfo from './RecipeInfo'
 import RecipeIngredients from './RecipeIngredients'
 import RecipeInstructions from './RecipeInstructions'
 import Button from '../../components/controls/Button'
-import Context from '../../contexts/'
+import Contexts from '../../contexts/'
 import { useDialog } from '../../components/useDialog'
 import ConfirmDialog from './ConfirmDialog'
 import CommentDialog from './CommentDialog'
 import { useForm } from '../../components/useForm'
 import BackToTop from '../../components/BackToTop'
+import RecipeErrorBox from './RecipeErrorBox'
 
 const index = () => {
   const classes = useStyles()
@@ -24,48 +25,76 @@ const index = () => {
   const [recipe, setRecipe] = useState(null)
   const [avatar, setAvatar] = useState(null)
   const history = useNavigate()
-  const context = useContext(Context.UserContext)
+  const userCtx = useContext(Contexts.UserContext)
   const confirmDialog = useDialog()
   const commentDialog = useDialog()
   const [commentDialogError, setCommentDialogError] = useState(false)
   const { values, handleInputChange } = useForm()
 
+  const recipeCtx = useContext(Contexts.RecipeContext)
   const handleCommentDialogChange = (e) => {
     setCommentDialogError(false)
     handleInputChange(e)
   }
+  // useEffect(() => {
+  //   let isMounted = true
+  //   const recipe = async () => {
+  //     const recipe = await recipeServices.getRecipe(params.id)
+  //     if (recipe.status === 200) {
+  //       if (isMounted) {
+  //         setRecipe(recipe.data)
+  //         if (recipe.data.avatar.key !== '') {
+  //           setAvatar(`/api/recipes/avatars/${recipe.data.id}`)
+  //         } else {
+  //           setAvatar(generateFoodAvatar(recipe.data.course))
+  //         }
+  //       }
+  //     } else {
+  //       setRecipe(false)
+  //     }
+  //   }
+  //   recipe()
+
+  //   return () => {
+  //     isMounted = false
+  //   }
+
+  // }, [])
+
+
+
   useEffect(() => {
-    let isMounted = true
-    const recipe = async () => {
-      const recipe = await recipeServices.getRecipe(params.id)
-      if (recipe.status === 200) {
-        if (isMounted) {
-          setRecipe(recipe.data)
-          if (recipe.data.avatar.key !== '') {
-            setAvatar(`/api/recipes/avatars/${recipe.data.id}`)
-          } else {
-            setAvatar(generateFoodAvatar(recipe.data.course))
-          }
-        }
+    const recipeInCtx = recipeCtx.recipes.find(r => r.id === params.id)
+    if (recipeInCtx) {
+      setRecipe(recipeInCtx)
+      if (recipeInCtx.avatar.key !== '') {
+        setAvatar(`/api/recipes/avatars/${recipeInCtx.id}`)
       } else {
-        setRecipe(false)
+        setAvatar(generateFoodAvatar(recipeInCtx.course))
       }
-    }
-    recipe()
-
-    return () => {
-      isMounted = false
+    } else {
+      setRecipe(false)
+      setAvatar(generateFoodAvatar('sweet'))
     }
 
-  }, [])
+
+  }, [recipeCtx])
 
   const addLike = async () => {
     const response = await recipeServices.addLike(recipe.id)
+    // Returns updated user
     if (response.status === 200) {
+      // As response does not return updated recipe, likes are incremented manually
+      const newRecipes = recipeCtx.recipes
+        .map(r => r.id === recipe.id
+          ? { ...r, likers: r.likers.concat(response.data.user.id) }
+          : r)
+      recipeCtx.setRecipes(newRecipes)
+
       const prevUser = window.localStorage.getItem('userJson')
       const newUser = { ...JSON.parse(prevUser), user: (response.data.user) }
       window.localStorage.setItem('userJson', JSON.stringify(newUser))
-      context.setUser(newUser)
+      userCtx.setUser(newUser)
     } else {
       console.log('Adding like failed')
     }
@@ -74,10 +103,18 @@ const index = () => {
   const removeLike = async () => {
     const response = await recipeServices.removeLike(recipe.id)
     if (response.status === 200) {
+      // As response does not return updated recipe, likes are decremented manually
+      const newRecipes = recipeCtx.recipes
+        .map(r => r.id === recipe.id
+          ? { ...r, likers: r.likers.filter(r => r !== response.data.user.id) }
+          : r)
+      console.log(newRecipes)
+      recipeCtx.setRecipes(newRecipes)
+
       const prevUser = window.localStorage.getItem('userJson')
       const newUser = { ...JSON.parse(prevUser), user: (response.data.user) }
       window.localStorage.setItem('userJson', JSON.stringify(newUser))
-      context.setUser(newUser)
+      userCtx.setUser(newUser)
     } else {
       console.log('Removing like failed')
     }
@@ -89,9 +126,10 @@ const index = () => {
       return
     }
     const comment = values.comment
-    console.log(comment)
     const response = await recipeServices.postComment(recipe.id, comment)
     if (response.status === 202) {
+      const newRecipes = recipeCtx.recipes.map(r => r.id === recipe.id ? response.data.recipe : r)
+      recipeCtx.setRecipes(newRecipes)
       commentDialog.handleClose()
     } else {
       setCommentDialogError('Failed')
@@ -101,6 +139,17 @@ const index = () => {
   const deleteRecipe = async () => {
     const response = await recipeServices.deleteRecipe(recipe.id)
     if (response.status === 202) {
+      // Update recipes
+      const newRecipes = recipeCtx.recipes.filter(r => r.id !== recipe.id)
+      recipeCtx.setRecipes(newRecipes)
+
+      // Update user
+      const prevUser = window.localStorage.getItem('userJson')
+      const newUser = { ...userCtx.user.user, recipes: userCtx.user.user.recipes.filter(r => r.id !== recipe.id) }
+      const updatedUser = { ...JSON.parse(prevUser), user: newUser }
+      window.localStorage.setItem('userJson', JSON.stringify(updatedUser))
+      userCtx.setUser(updatedUser)
+
       confirmDialog.handleClose()
       history('/recipes')
     } else {
@@ -150,13 +199,13 @@ const index = () => {
                 <Grid item>
                   <Grid container spacing={1} sx={{ mt:'4px' }}>
                     <Grid item sx={{ ml: '4px', flexGrow: 1 }}>
-                      { context.user?.user.id === recipe.user.id &&
+                      { (userCtx.user && recipe.user) && userCtx.user?.user.id === recipe.user?.id &&
                       <Button {...buttonProps } onClick={confirmDialog.handleOpen} color='error' text='Delete' />
                       }
                     </Grid>
                     <Grid item>
-                      { context.user ?
-                        context.user?.user?.likedRecipes?.includes(recipe.id) ?
+                      { userCtx.user ?
+                        userCtx.user?.user?.likedRecipes?.includes(recipe.id) ?
                           <Button { ...buttonProps } onClick={removeLike} text='Unlike' /> :
                           <Button { ...buttonProps } onClick={addLike} text='like' />
                         :
@@ -165,12 +214,12 @@ const index = () => {
 
                     </Grid>
                     <Grid item sx={{ mr: '4px' }}>
-                      <Button { ...buttonProps } disabled={context.user ? false : true} onClick={commentDialog.handleOpen} text='Comment' />
+                      <Button { ...buttonProps } disabled={userCtx.user ? false : true} onClick={commentDialog.handleOpen} text='Comment' />
                     </Grid>
                   </Grid>
                 </Grid>
 
-                <RecipeComments comments={recipe.comments} />
+                <RecipeComments comments={recipe.comments} recipeCtx={recipeCtx} />
 
               </CardContent>
               <ConfirmDialog open={confirmDialog.open} handleClose={confirmDialog.handleClose} action={deleteRecipe} />
@@ -185,7 +234,7 @@ const index = () => {
             <BackToTop />
           </Grid>
           :
-          <>Recipe not found</>
+          <RecipeErrorBox message='Recipe not found' />
       }
     </>
   )

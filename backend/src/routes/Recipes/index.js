@@ -130,9 +130,9 @@ router.put('/:id/likes', middleware.userExtractor, async (req, res, next) => {
       ...recipeInDb, likes: recipeInDb.likers.push(reqUser.id)
     }
 
-    const newRecipe = await Recipe.findByIdAndUpdate(req.params.id, updatedRecipe, { new: true })
+    await Recipe.findByIdAndUpdate(req.params.id, updatedRecipe, { new: true })
 
-    res.status(200).json({ user: newUser, recipe: newRecipe })
+    res.status(200).json({ user: newUser })
   } catch(e) {
     next(e)
   }
@@ -146,11 +146,11 @@ router.delete('/:id/likes', middleware.userExtractor, async (req, res, next) => 
       { '$pull': { 'likedRecipes': req.params.id } }, { new: true })
 
     // Delete like from recipe
-    const newRecipe = await Recipe.findByIdAndUpdate(
+    await Recipe.findByIdAndUpdate(
       req.params.id,
       { '$pull': { 'likers': req.user.id } }, { new: true })   // Delete liker from the recipe
 
-    res.status(200).send({ user: newUser, recipe: newRecipe })
+    res.status(200).send({ user: newUser })
 
   } catch(e) {
     next(e)
@@ -218,7 +218,7 @@ router.delete('/:id', middleware.userExtractor, async (req, res, next) => {
 
 router.get('/', async (req, res, next) => {
   try {
-    const recipe = await Recipe.find().populate('user')
+    const recipe = await Recipe.find().populate('user').populate('comments')
     logger.info(recipe)
     return res.status(200).json(recipe)
   } catch(e) {
@@ -251,7 +251,11 @@ router.post('/', middleware.userExtractor, async (req, res, next) => {
 
       await userInDb.save()
 
-      res.status(200).json(savedRecipe)
+      // https://stackoverflow.com/questions/13525480/mongoose-populate-after-save#:~:text=was%20to%20use-,execPopulate,-%2C%20like%20so
+      // User and comments could probably be populated by chaining a callback function. TODO: Look into this
+      const recipeInDb = await Recipe.findById(savedRecipe.id).populate('user').populate('comments')
+
+      res.status(200).json(recipeInDb)
     }
   } catch(e) {
     return next(e)
@@ -270,8 +274,9 @@ router.post('/:id/comments', middleware.userExtractor, async (req, res, next) =>
     })
     const savedComment = await comment.save()
     recipeInDb.comments = recipeInDb.comments.concat(savedComment.id)
-    recipeInDb.save()
-    res.status(202).send('Okei')
+    await recipeInDb.save()
+    const updatedRecipe = await Recipe.findById(recipeInDb.id).populate('user').populate('comments')
+    res.status(202).json({ recipe: updatedRecipe })
   } catch(e) {
     next(e)
   }
@@ -286,11 +291,11 @@ router.delete('/:id/comments', middleware.userExtractor, async (req, res, next) 
 
     // Delete comment reference from recipe
     const newRecipe = await Recipe.findByIdAndUpdate(commentInDb.recipe.id,
-      { '$pull': { 'comments': req.params.id } }, { new: true })
+      { '$pull': { 'comments': req.params.id } }).populate('user').populate('comments')
 
     console.log(newRecipe)
 
-    res.status(202).send('Okei')
+    res.status(202).json({ recipe: newRecipe })
   } catch(e) {
     next(e)
   }

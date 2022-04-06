@@ -3,11 +3,13 @@ const router = express.Router()
 const middleware = require('../../utils/middleware')
 const logger = require('../../utils/logger')
 const User = require('../../models/user')
+const Recipe = require('../../models/recipe')
 const Follower = require('../../models/follow')
 const bcrypt = require('bcrypt')
 const path = require('path')
 const multer = require('multer')
 const fs = require('fs')
+const ObjectId = require('mongodb').ObjectId
 
 const { uploadFile, getFileStream, deleteFile } = require('../../utils/s3')
 
@@ -195,8 +197,8 @@ router.delete('/:id', middleware.userExtractor, async (req, res, next) => {
 router.post('/confirmAndDelete', middleware.userExtractor, async (req, res, next) => {
   try {
     const userInDb = await User.findById(req.user.id).select('+hashPassword')
-    console.log('deleting')
-    console.log(userInDb)
+    // console.log('deleting')
+    // console.log(userInDb)
     const correctPassword = userInDb === null
       ? false
       : await bcrypt.compare(req.body.password, userInDb.hashPassword)
@@ -205,7 +207,10 @@ router.post('/confirmAndDelete', middleware.userExtractor, async (req, res, next
       const error = { name: 'FalseLogin', message: 'Wrong username or password' }
       return next(error)
     } else {
-      await User.findByIdAndDelete(req.user.id)
+
+      // Delete user references from recipes
+      await Recipe.updateMany( { 'user': req.user.id }, { $unset: { 'user': '' } })
+
       res.status(200).send('Delete successful')
     }
   } catch(e) {

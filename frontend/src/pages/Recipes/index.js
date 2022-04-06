@@ -4,7 +4,6 @@ import useStyles from './styles'
 import { Grid } from '@mui/material'
 import BackToTop from '../../components/BackToTop'
 import SimpleRecipe from '../../components/recipe/SimpleRecipe'
-import RecipeServices from '../../services/recipeServices'
 import SearchBox from '../../components/SearchBox'
 import Select from '../../components/controls/Select'
 import RadioGroup from '../../components/controls/RadioGroup'
@@ -33,10 +32,10 @@ const radioOptions = [
 const index = () => {
 
   const classes = useStyles()
-  const [recipes, setRecipes] = useState(null)
   const [filteredRecipes, setFilteredRecipes] = useState(null)
   const [addNew, setAddNew] = useState(false)
-  const context = useContext(Contexts.UserContext)
+  const userCtx = useContext(Contexts.UserContext)
+  const recipeCtx = useContext(Contexts.RecipeContext)
 
   const { values, setValues, handleInputChange } = useForm({
     filter: '',
@@ -47,34 +46,22 @@ const index = () => {
   let query = useQuery()
 
   useEffect(() => {
-    let mounted = true
-    const fetchRecipes = async () => {
-      const recipes = await RecipeServices.getRecipes()
-      if (mounted) {
-        setRecipes(recipes)
-        setFilteredRecipes(recipes)
-        const scrollPosition = sessionStorage.getItem('scrollPositionRecipes')
-        if (scrollPosition) {
-          window.scrollTo(0, parseInt(scrollPosition))
-          sessionStorage.removeItem('scrollPositionRecipes')
-        }
-        const queryRes = query.get('user')
-        if (queryRes) {
-          setValues({ ...values, ['searchText']: `user::${queryRes}` })
-        }
-      }
+    setFilteredRecipes(recipeCtx.recipes)
+    const scrollPosition = sessionStorage.getItem('scrollPositionRecipes')
+    if (scrollPosition) {
+      window.scrollTo(0, parseInt(scrollPosition))
+      sessionStorage.removeItem('scrollPositionRecipes')
     }
-
-    fetchRecipes()
-
-    return () => {
-      mounted = false
+    const queryRes = query.get('user')
+    if (queryRes) {
+      setValues({ ...values, ['searchText']: `user::${queryRes}` })
     }
-  }, [])
+  }, [recipeCtx])
+
 
   useEffect(() => {
     if (values.searchText.startsWith('user::')) {
-      const result = recipes?.filter(r => {
+      const result = recipeCtx.recipes?.filter(r => {
         return r.user?.username.toLowerCase() === values.searchText.substring(6)
           && (r.course.toLowerCase() === values.radioSelection.toLowerCase() || values.radioSelection === '')
       })
@@ -83,7 +70,7 @@ const index = () => {
       setFilteredRecipes(result)
 
     } else {
-      const result = recipes?.filter(r => {
+      const result = recipeCtx.recipes?.filter(r => {
         return r.title.toLowerCase().includes(values.searchText.toLowerCase())
           && (r.course.toLowerCase() === values.radioSelection.toLowerCase() || values.radioSelection === '')
       })
@@ -92,6 +79,8 @@ const index = () => {
       setFilteredRecipes(result)
     }
   }, [values])
+
+
 
   const handleClick = () => {
     sessionStorage.setItem('scrollPositionRecipes', window.pageYOffset)
@@ -113,7 +102,7 @@ const index = () => {
                 placeholder="Search recipes"
                 onChange={handleInputChange}
                 value={values.searchText} />
-              {context.user &&
+              {userCtx.user &&
               <Select
                 name='filter'
                 label='Filter'
@@ -133,17 +122,15 @@ const index = () => {
       </Grid> }
       <Grid item xs={!addNew ? 12 : 0} className={classes.newRecipe}>
         {addNew ?
-          context.user && <NewRecipe close={toggleAddNew}/>
+          userCtx.user && <NewRecipe close={toggleAddNew}/>
           :
-          context.user && <Controls.Button xs={12} sx={{ margin: '1.5em 0 0 2em' }} onClick={toggleAddNew} size="small" text="Add new" />
+          userCtx.user && <Controls.Button xs={12} sx={{ margin: '1.5em 0 0 2em' }} onClick={toggleAddNew} size="small" text="Add new" />
         }
       </Grid>
       { !addNew &&
         filteredRecipes?.map(r => (
           <Grid item key={r.id} xs={12} md={6} xl={4} align="center" onClick={handleClick}>
             <SimpleRecipe recipe={r} />
-            { /* <Button size="small" onClick={handleClick} text="Open" sx={{ margin: '0.2em' }} component={Link} to={`/recipes/${r.id}`} ></Button>
-            </SimpleRecipe> */ }
           </Grid>
         ))
       }

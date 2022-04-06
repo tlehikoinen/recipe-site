@@ -1,5 +1,5 @@
+import React, { useContext } from 'react'
 import { Box, Card, CardContent, CardHeader, CardMedia, Grid, Typography } from '@mui/material'
-import React from 'react'
 import { useForm } from '../../useForm'
 import useStyles from './styles.js'
 import Controls from '../../controls/Controls'
@@ -8,6 +8,7 @@ import IngredientInput from '../../InputTable/IngredientInput'
 import StepInput from '../../InputTable/StepInput'
 import ImageLoader from '../../ImageLoader'
 import recipeServices from '../../../services/recipeServices'
+import Contexts from '../../../contexts'
 
 const difficultyOptions = [
   { id: 1, title: 'Easy' },
@@ -52,7 +53,8 @@ const validationData = {
 
 const index = ({ close }) => {
   const classes = useStyles()
-
+  const recipeCtx = useContext(Contexts.RecipeContext)
+  const userCtx = useContext(Contexts.UserContext)
   const { file, setFile, inputFile, onChangeFile, avatar, setAvatar } = ImageLoader()
   const { values, setValues, handleInputChange, resetValues, validation, setValidation } = useForm({
     title: '',
@@ -71,13 +73,28 @@ const index = ({ close }) => {
     const [value, unit] = timeScaleValues[values.timeEstimate].split(' ')
     const convertedValues = { ...values, timeEstimate: { value: value, unit: unit } }
     const res = await recipeServices.addRecipe(convertedValues)
-    console.log(res)
     if (res.status === 200) {
+      // Image is loaded in its own request after first request with recipe data is done
       if (file) {
         const imgRes = await recipeServices.postAvatar(res.data.id, file)
-        console.log(imgRes)
+        res.data = { ...res.data, avatar: imgRes.data.recipe.avatar }
       }
+      // Update contexts
+      const updatedRecipes = recipeCtx.recipes.concat(res.data)
+      recipeCtx.setRecipes(updatedRecipes)
+
+      const prevUser = window.localStorage.getItem('userJson')
+      const newUser = { ...userCtx.user.user, recipes: userCtx.user.user.recipes.concat(res.data) }
+
+      const updatedUser = { ...JSON.parse(prevUser), user: (newUser) }
+      window.localStorage.setItem('userJson', JSON.stringify(updatedUser))
+
+      //userCtx.setUser({ ...userCtx.user, user: newUser })
+      userCtx.setUser(updatedUser)
+
       close()
+
+
     } else {
       console.log(res)
       // Error data for validation is in form: '{Schema} validation failed: error message for `field`, error message for `field2`...

@@ -22,7 +22,8 @@ const index = () => {
   const userCtx = useContext(Contexts.UserContext)
   const classes = useStyles()
 
-  const themeChange = (e) => {
+  const themeChange = async (e) => {
+    console.log('theme change')
     const { value } = e.target
 
     if (value === themeOptions[infoCtx?.theme]) {   // If theme equals clicked, return
@@ -32,7 +33,8 @@ const index = () => {
       const updatedTheme = Object.keys(themeOptions).filter(k => {return themeOptions[k] === value})[0]  // updatedTheme is the key from themeOptions
       window.localStorage.setItem('theme', updatedTheme)
       infoCtx.changeTheme(updatedTheme)
-      if (userCtx.user) {
+      if (userCtx.user && updatedTheme) {
+        console.log('updating theme')
         updateThemeInDb(updatedTheme)
       }
     }
@@ -40,6 +42,11 @@ const index = () => {
 
   const updateThemeInDb = async (theme) => {
     await userServices.updateTheme(userCtx.user.user.id, theme)
+    const prevUser = window.localStorage.getItem('userJson')
+    const newUser = { ...userCtx.user.user, theme: theme }
+
+    const updatedUser = { ...JSON.parse(prevUser), user: (newUser) }
+    window.localStorage.setItem('userJson', JSON.stringify(updatedUser))
   }
 
   return (

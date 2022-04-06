@@ -10,12 +10,18 @@ const useStyles = makeStyles(() => ({
     marginTop: '3em'
   }
 }))
-const RecipeComments = ({ comments }) => {
+const RecipeComments = ({ comments, recipeCtx }) => {
   const classes = useStyles()
 
   const deleteComment = async (id) => {
-    await recipeServices.deleteComment(id)
-    console.log(`deleting comment ${id}`)
+    const response = await recipeServices.deleteComment(id)
+    console.log(response)
+    if (response.status === 202) {
+      console.log('okei')
+      const newRecipes = recipeCtx.recipes.map(r => r.id === response.data.recipe.id ? response.data.recipe : r)
+      console.log(newRecipes)
+      recipeCtx.setRecipes(newRecipes)
+    }
   }
 
   const userContext = useContext(Context.UserContext)

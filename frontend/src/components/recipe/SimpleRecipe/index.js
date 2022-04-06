@@ -16,14 +16,13 @@ const SimpleRecipe = ({ recipe, children }) => {
   // * THIS PREVENTS REDIRECTIONS TO RECIPE PAGE WHEN IMG IS CLICKED * //
   const [imgDialogOpen, setImgDialogOpen] = useState(false)
 
-  useEffect(async () => {
-    // TODO, async?
+  useEffect(() => {
     if (recipe.avatar.key === '') {
       setAvatar(generateFoodAvatar(recipe.course))
     } else {
       setAvatar(`/api/recipes/avatars/${recipe.id}`)  // Avatar points to API endpoint (get request, returns image as a stream)
     }
-  },[])
+  }, [])
 
   const classes = recipeStyles()
 
@@ -45,7 +44,7 @@ const SimpleRecipe = ({ recipe, children }) => {
             <Grid item>
               <Box>
                 <Typography variant='h6' className={classes.recipeHeader}>{recipe.title}</Typography>
-                <Typography variant='caption'>{recipe.user?.username}</Typography>
+                <Typography variant='caption'>{recipe?.user?.username || 'Anonymous'}</Typography>
               </Box>
             </Grid>
             <Grid item>

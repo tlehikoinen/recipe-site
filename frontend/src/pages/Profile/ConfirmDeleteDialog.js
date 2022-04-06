@@ -44,9 +44,7 @@ const ConfirmDeleteDialog = (props) => {
   const deleteUser = async () => {
     const res = await UserServices.deleteUserWithConfirmation({ password: password })
     if (res.status !== 200) {
-      console.log('Wrong password')
       setPasswordError(true)
-
     } else {
       handleClose()
       history('/logout')

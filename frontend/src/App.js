@@ -68,6 +68,7 @@ const App = () => {
     const userJson = window.localStorage.getItem('userJson')
     if (userJson) {
       const parsedUser = JSON.parse(userJson)
+      console.log(Object.entries(parsedUser))
       if (parsedUser) {
         themeCtx.changeTheme(parsedUser.user.theme)
         UserServices.setToken(parsedUser.token)

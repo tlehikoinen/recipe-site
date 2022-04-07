@@ -20,7 +20,8 @@ const courseOptions = [
   { id: 2, title: 'Vegetarian' },
   { id: 3, title: 'Sweet' }
 ]
-const timeScaleValues = [
+
+export const timeScaleValues = [
   '15 min', '30 min', '45 min', '1 h', '1.5 h',
   '2 h', '2.5 h', '3 h', '4 h', '5 h',
   '6 h', '8 h', '10 h', '12 h', '16 h',

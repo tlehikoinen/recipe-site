@@ -11,6 +11,7 @@ import { useForm } from '../../components/useForm'
 import Contexts from '../../contexts'
 import Controls from '../../components/controls/Controls'
 import NewRecipe from '../../components/recipe/NewRecipe'
+import { timeScaleValues } from '../../components/recipe/NewRecipe'
 
 // A custom hook that builds on useLocation to parse
 // the query string for you.
@@ -21,13 +22,61 @@ const useQuery = () => {
 }
 const filterOptions = [
   { id: 1, title: 'Followed' },
-  { id: 2, title: 'Most likes' },
+  { id: 2, title: 'Liked' },
+  { id: 3, title: 'Most likes' },
+  { id: 4, title: 'Quickest' },
+  { id: 5, title: 'With profile picture' },
 ]
 const radioOptions = [
   { id: 1, title: 'Savory' },
   { id: 2, title: 'Vegetarian' },
   { id: 3, title: 'Sweet' }
 ]
+
+const likeComparator = (a, b) => {
+  return b.likers.length - a.likers.length
+}
+const timeComparator = (a, b) => {
+  // Times in timeScaleValues array are in sorted form
+  // Compare recipes timeEstimate and find corresponding index for it
+  // Quicker times have smaller index
+
+  const aEq = timeScaleValues.findIndex(f => {
+    const [value, unit] = f.split(' ')
+    return unit === a.timeEstimate.unit && value === a.timeEstimate.value
+  })
+
+  const bEq = timeScaleValues.findIndex(f => {
+    const [value, unit] = f.split(' ')
+    return unit === b.timeEstimate.unit && value === b.timeEstimate.value
+  })
+
+  return aEq - bEq
+}
+
+const filterRecipesDropDown = (recipes, dropdownSelection, user) => {
+  if([null, undefined, ''].includes(dropdownSelection) || [null, undefined].includes(user)){
+    return recipes
+  }
+  else if (dropdownSelection === 'Followed') {
+    const filtered = recipes.filter(r => {
+      return user.following?.some(userFollowing => r.user?.followers?.some(recipeFollower => userFollowing.toString() === recipeFollower.toString() ))
+    })
+    return filtered
+  }
+  else if (dropdownSelection === 'Liked') {
+    return recipes.filter(r => user.likedRecipes?.some(liked => liked.toString() === r.id.toString()))
+  }
+  else if (dropdownSelection === 'Most likes') {
+    return recipes.sort(likeComparator)
+  }
+  else if (dropdownSelection === 'Quickest') {
+    return recipes.sort(timeComparator)
+  }
+  else if (dropdownSelection === 'With profile picture') {
+    return recipes.filter(r => r.avatar.key !== '')
+  }
+}
 
 const index = () => {
 
@@ -62,12 +111,13 @@ const index = () => {
   useEffect(() => {
     if (values.searchText.startsWith('user::')) {
       const result = recipeCtx.recipes?.filter(r => {
-        return r.user?.username.toLowerCase() === values.searchText.substring(6)
+        return r.user?.username.toLowerCase() === values.searchText.substring(6).toLowerCase()
           && (r.course.toLowerCase() === values.radioSelection.toLowerCase() || values.radioSelection === '')
       })
 
+      const filteredResult = filterRecipesDropDown(result, values.filter, userCtx.user?.user)
       // TODO: Filter drop down selections (following, most likes etc...)
-      setFilteredRecipes(result)
+      setFilteredRecipes(filteredResult)
 
     } else {
       const result = recipeCtx.recipes?.filter(r => {
@@ -75,8 +125,9 @@ const index = () => {
           && (r.course.toLowerCase() === values.radioSelection.toLowerCase() || values.radioSelection === '')
       })
 
+      const filteredResult = filterRecipesDropDown(result, values.filter, userCtx.user?.user)
       // TODO: Filter drop down selections (following, most likes etc...)
-      setFilteredRecipes(result)
+      setFilteredRecipes(filteredResult)
     }
   }, [values])
 

@@ -208,6 +208,8 @@ router.post('/confirmAndDelete', middleware.userExtractor, async (req, res, next
       return next(error)
     } else {
 
+      // Delete user
+      await User.findByIdAndDelete(userInDb.id)
       // Delete user references from recipes
       await Recipe.updateMany( { 'user': req.user.id }, { $unset: { 'user': '' } })
 

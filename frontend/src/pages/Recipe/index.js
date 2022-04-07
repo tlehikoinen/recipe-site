@@ -36,32 +36,6 @@ const index = () => {
     setCommentDialogError(false)
     handleInputChange(e)
   }
-  // useEffect(() => {
-  //   let isMounted = true
-  //   const recipe = async () => {
-  //     const recipe = await recipeServices.getRecipe(params.id)
-  //     if (recipe.status === 200) {
-  //       if (isMounted) {
-  //         setRecipe(recipe.data)
-  //         if (recipe.data.avatar.key !== '') {
-  //           setAvatar(`/api/recipes/avatars/${recipe.data.id}`)
-  //         } else {
-  //           setAvatar(generateFoodAvatar(recipe.data.course))
-  //         }
-  //       }
-  //     } else {
-  //       setRecipe(false)
-  //     }
-  //   }
-  //   recipe()
-
-  //   return () => {
-  //     isMounted = false
-  //   }
-
-  // }, [])
-
-
 
   useEffect(() => {
     const recipeInCtx = recipeCtx.recipes.find(r => r.id === params.id)
@@ -76,7 +50,6 @@ const index = () => {
       setRecipe(false)
       setAvatar(generateFoodAvatar('sweet'))
     }
-
 
   }, [recipeCtx])
 
@@ -229,7 +202,9 @@ const index = () => {
                 handleInputChange={handleCommentDialogChange}
                 handleClose={commentDialog.handleClose}
                 commentDialogError={commentDialogError}
-                action={addComment} />
+                action={addComment}
+                title='Add comment'
+                submitBtnText='Add' />
             </Card>
             <BackToTop />
           </Grid>

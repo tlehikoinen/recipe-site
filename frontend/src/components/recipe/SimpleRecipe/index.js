@@ -41,9 +41,9 @@ const SimpleRecipe = ({ recipe, children }) => {
       <Card className={classes.card}>
         <CardContent onClick={(e) => clicking(e)}>
           <Grid container direction='column'>
-            <Grid item>
+            <Grid item sx={{ textAlign: 'center' }}>
               <Box>
-                <Typography variant='h6' className={classes.recipeHeader}>{recipe.title}</Typography>
+                <Typography variant='h6'>{recipe.title}</Typography>
                 <Typography variant='caption'>{recipe?.user?.username || 'Anonymous'}</Typography>
               </Box>
             </Grid>

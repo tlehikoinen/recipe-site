@@ -32,12 +32,12 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const CommentDialog = (props) => {
-  const { open, handleClose, values, handleInputChange, commentDialogError, action } = props
+  const { open, handleClose, values, handleInputChange, commentDialogError, action, title, submitBtnText } = props
   const classes = useStyles()
 
   return (
     <Dialog className={classes.root} open={open} onClose={handleClose} >
-      <DialogTitle>Add a comment</DialogTitle>
+      <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <Input name='comment' multiline text={values} onChange={handleInputChange} />
         { commentDialogError && <Typography color='error'>{commentDialogError}</Typography> }
@@ -46,7 +46,7 @@ const CommentDialog = (props) => {
       </DialogContent>
       <DialogActions>
         <Controls.Button text='Cancel' size='small' onClick={handleClose} />
-        <Controls.Button text='Add' size='small' onClick={action} />
+        <Controls.Button text={submitBtnText} size='small' onClick={action} />
       </DialogActions>
     </Dialog>
   )

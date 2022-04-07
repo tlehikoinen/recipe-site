@@ -33,7 +33,7 @@ const radioOptions = [
   { id: 3, title: 'Sweet' }
 ]
 
-const likeComparator = (a, b) => {
+export const likeComparator = (a, b) => {
   return b.likers.length - a.likers.length
 }
 const timeComparator = (a, b) => {

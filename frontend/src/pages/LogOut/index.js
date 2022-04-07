@@ -14,7 +14,7 @@ const index = () => {
     const timer = setTimeout(() => setTimeDelay(timeDelay-1), 1000)
 
     if (timeDelay === 0) {
-      history('/home')
+      history('/')
     }
 
     return () => {

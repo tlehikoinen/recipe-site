@@ -18,10 +18,7 @@ const recipeStyles = makeStyles((theme) => ({
   recipeInfo: {
     marginTop: '1em !important',
   },
-  recipeHeader: {
-    textAlign: 'center',
-    maxWidth: '265px',
-  },
+
   '& .MuiCardMedia-root': {
     borderRadius: '4px',
     marginTop: '4px',

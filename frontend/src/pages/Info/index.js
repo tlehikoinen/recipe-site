@@ -1,49 +1,37 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { Card, CardContent, Grid, Typography } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 
-const cats = [
-  'https://www.vetcare.fi/wp-content/uploads/Luonnosta-loydetty-arka-kissa-kotiutuu-yleensa-hyvin-uuteen-perheeseen.jpg',
-  'https://evidensia.fi/wp-content/uploads/2020/06/kissa-kesa%CC%88-evidensia-scaled.jpg',
-  'https://i.guim.co.uk/img/media/26392d05302e02f7bf4eb143bb84c8097d09144b/446_167_3683_2210/master/3683.jpg?width=1200&height=1200&quality=85&auto=format&fit=crop&s=49ed3252c0b2ffb49cf8b508892e452d'
-]
-
-const Info = () => {
-  const [cat, setCat] = useState(false)
-  const [catNumber, setCatNumber] = useState(0)
-
-
-  const handleClick = () => {
-    setCat(!cat)
-    if(!cat) return
-    if (catNumber === cats.length-1) {
-      setCatNumber(0)
-    } else {
-      setCatNumber(catNumber+1)
+const useStyles = makeStyles(() => ({
+  root: {
+    '& a:link': {
+      backgroundColor: 'transparent',
+      textDecoration: 'none'
+    },
+    '& a:hover': {
+      color: 'red'
     }
   }
+}))
+
+const Info = () => {
+  const classes = useStyles()
 
   return (
-    <div>
-      {cat
-        ?
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={handleClick}
-          onKeyPress={() => console.log('hurray')}>
-          <img
-            height="400"
-            width="400"
-            src={cats[catNumber]}
-            alt="loading...">
-          </img>
-        </div>
-        :
-        <div>
-          <button onClick={handleClick}>Täällä on kissa</button>
-        </div>
-      }
+    <Grid container className={classes.root} sx={{ justifyContent: 'center', mt: '1em' }}>
+      <Grid item sx={{ textAlign: 'center' }}>
+        <Card>
+          <CardContent>
+            <Typography variant='body1'>
+              Recipe site built with MERN-stack<br /><br />
+              Contact:
+              <a sx={{ color: 'white' }} href='https://github.com/yellowpasta'><Typography>github.com/yellowpasta</Typography></a>
+            </Typography>
+          </CardContent>
+        </Card>
+      </Grid>
+    </Grid>
 
-    </div>
   )
 }
 

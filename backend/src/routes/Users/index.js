@@ -120,7 +120,7 @@ router.put('/follow/:id', middleware.userExtractor, async (req, res, next) => {
       await followedUser.save()
 
       const updatedFollowingUser = await User.findById(req.user.id)
-      res.status(200).send({ user: updatedFollowingUser })
+      res.status(200).send({ user: updatedFollowingUser, follow: savedFollower })
     }
 
   } catch(e) {

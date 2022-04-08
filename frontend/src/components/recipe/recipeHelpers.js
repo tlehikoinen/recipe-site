@@ -40,6 +40,14 @@ export const timeScaleValues = [
   '1 week', '2 week', '3 week', '1 month'
 ]
 
+export const timeValueToIndex = (time) => {
+  const index = timeScaleValues.findIndex(f => {
+    const [value, unit] = f.split(' ')
+    return unit === time.unit && value === time.value
+  })
+  return index
+}
+
 export const recipeValidationData = {
   title: {
     error: false,

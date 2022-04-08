@@ -3,31 +3,12 @@ import { Box, Card, CardContent, CardHeader, CardMedia, Grid, Typography } from 
 import { useForm } from '../../useForm'
 import useStyles from './styles.js'
 import Controls from '../../controls/Controls'
-import { generateFoodAvatar } from '../recipeHelpers'
+import { courseOptions, difficultyOptions, generateFoodAvatar, timeScaleValues, timeValueToIndex } from '../recipeHelpers'
 import IngredientInput from '../../InputTable/IngredientInput'
 import StepInput from '../../InputTable/StepInput'
 import ImageLoader from '../../ImageLoader'
 import recipeServices from '../../../services/recipeServices'
 import Contexts from '../../../contexts'
-
-const difficultyOptions = [
-  { id: 1, title: 'Easy' },
-  { id: 2, title: 'Medium' },
-  { id: 3, title: 'Hard' }
-]
-const courseOptions = [
-  { id: 1, title: 'Savory' },
-  { id: 2, title: 'Vegetarian' },
-  { id: 3, title: 'Sweet' }
-]
-
-export const timeScaleValues = [
-  '15 min', '30 min', '45 min', '1 h', '1.5 h',
-  '2 h', '2.5 h', '3 h', '4 h', '5 h',
-  '6 h', '8 h', '10 h', '12 h', '16 h',
-  '1 d', '2 d', '3 d', '4 d', '5 d',
-  '1 week', '2 week', '3 week', '1 month'
-]
 
 const validationData = {
   title: {
@@ -64,7 +45,7 @@ const index = ({ close, originalRecipe }) => {
     course: originalRecipe.course,
     difficulty: originalRecipe.difficulty,
     ingredients: [...originalRecipe.ingredients],
-    timeEstimate: 3, // Convert to timescalevalues
+    timeEstimate: timeValueToIndex(originalRecipe.timeEstimate),
     steps: [...originalRecipe.steps],
     servings: originalRecipe.servings
   }, validationData)

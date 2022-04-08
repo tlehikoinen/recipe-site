@@ -23,9 +23,10 @@ const Info = () => {
         <Card>
           <CardContent>
             <Typography variant='body1'>
-              Recipe site built with MERN-stack<br /><br />
-              Contact:
-              <a sx={{ color: 'white' }} href='https://github.com/yellowpasta'><Typography>github.com/yellowpasta</Typography></a>
+              Recipe site built with MERN-stack<br/><br />
+              Contact:<br/>
+              {/* eslint-disable-next-line react/jsx-no-target-blank */}
+              <a target='_blank' href='https://github.com/yellowpasta' rel="noreferrer">github.com/yellowpasta</a>
             </Typography>
           </CardContent>
         </Card>

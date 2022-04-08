@@ -48,14 +48,12 @@ const DescriptionDialog = (props) => {
   }
 
   const updateDescription = async () => {
-    console.log(context.user.user.id)
     const res = await UserServices.updateDescription(context.user.user.id, description)
     if (res !== 401) {
       console.log(res.data)
       const prevUser = window.localStorage.getItem('userJson')
       const newUser = { ...JSON.parse(prevUser), user: (res.data.user) }
       window.localStorage.setItem('userJson', JSON.stringify(newUser))
-      console.log(Object.entries(newUser))
       context.setUser(newUser)
       handleClose()
     }

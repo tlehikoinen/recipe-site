@@ -23,7 +23,8 @@ const index = () => {
 
   useEffect(() => {
     const sortedRecipes = recipeCtx.recipes.sort(likeComparator)
-    setPopularRecipes(sortedRecipes.slice(0, 5))
+    const rec = sortedRecipes.slice(0, recipeCtx.recipes.length < 5 ? recipeCtx.recipes.length : 5)
+    setPopularRecipes(rec)
   }, [recipeCtx])
 
 
@@ -34,9 +35,11 @@ const index = () => {
         <Typography variant='h3'>Welcome</Typography>
         <Typography sx={{ mt: '2em' }} variant='h5'>Popular recipes</Typography>
       </Grid>
+      {popularRecipes.length !== 0 &&
       <Grid item className='subHeader'>
         <RecipeSlider recipes={popularRecipes} />
       </Grid>
+      }
     </Grid>
   )
 }

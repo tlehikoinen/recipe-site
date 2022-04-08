@@ -18,6 +18,7 @@ import CommentDialog from './CommentDialog'
 import { useForm } from '../../components/useForm'
 import BackToTop from '../../components/BackToTop'
 import RecipeErrorBox from './RecipeErrorBox'
+import EditRecipe from '../../components/recipe/EditRecipe'
 
 const index = () => {
   const classes = useStyles()
@@ -30,7 +31,7 @@ const index = () => {
   const commentDialog = useDialog()
   const [commentDialogError, setCommentDialogError] = useState(false)
   const { values, handleInputChange } = useForm()
-
+  const [editMode, setEditMode] = useState(false)
   const recipeCtx = useContext(Contexts.RecipeContext)
   const handleCommentDialogChange = (e) => {
     setCommentDialogError(false)
@@ -51,7 +52,11 @@ const index = () => {
       setAvatar(generateFoodAvatar('sweet'))
     }
 
-  }, [recipeCtx])
+  }, [recipeCtx, userCtx])
+
+  useEffect(() => {
+    window.scrollTo(0,0)
+  }, [])
 
   const addLike = async () => {
     const response = await recipeServices.addLike(recipe.id)
@@ -81,7 +86,6 @@ const index = () => {
         .map(r => r.id === recipe.id
           ? { ...r, likers: r.likers.filter(r => r !== response.data.user.id) }
           : r)
-      console.log(newRecipes)
       recipeCtx.setRecipes(newRecipes)
 
       const prevUser = window.localStorage.getItem('userJson')
@@ -128,9 +132,12 @@ const index = () => {
     } else {
       console.log('Recipe deletion failed')
     }
-    console.log(response)
   }
 
+  const handleEditClose = () => {
+    setEditMode(false)
+    window.scrollTo(0,0)
+  }
 
   const isSmallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'))
   const buttonProps = {
@@ -142,72 +149,83 @@ const index = () => {
       {recipe === null ?
         <> </> :
         recipe !== false ?
-          <Grid container className={classes.root}>
-            <Card>
-              <CardContent>
-                <Grid item className={classes.header}>
-                  <Typography variant='h4'>{recipe.title}</Typography>
-                </Grid>
-                <Grid item>
-                  <Grid container direction='row' className={classes.info}>
-                    <Grid item xs={4}>
-                      <ImageWithDialog avatar={avatar} alt={recipe.description} loading="lazy" />
-                    </Grid>
-                    <Grid item xs={8}>
-                      <Typography>{recipe.description}</Typography>
-                      <RecipeInfo recipe={recipe} type='sm' />
+          !editMode ?
+            <Grid container className={classes.root}>
+              <Card>
+                <CardContent>
+                  <Grid item className={classes.header}>
+                    <Typography variant='h4'>{recipe.title}</Typography>
+                  </Grid>
+                  <Grid item>
+                    <Grid container direction='row' className={classes.info}>
+                      <Grid item xs={4}>
+                        <ImageWithDialog avatar={avatar} alt={recipe.description} loading="lazy" />
+                      </Grid>
+                      <Grid item xs={8}>
+                        <Typography>{recipe.description}</Typography>
+                        <RecipeInfo recipe={recipe} type='sm' />
+                      </Grid>
                     </Grid>
                   </Grid>
-                </Grid>
-                <Grid item>
-                  <RecipeInfo recipe={recipe} type='xs'/>
-                </Grid>
-                <Grid item className={classes.ingredients}>
-                  <RecipeIngredients ingredients={recipe.ingredients} />
-                </Grid>
-                <Grid item>
-                  <RecipeInstructions instructions={recipe.steps} />
-                </Grid>
-                <Grid item sx={{ height: '40px' }}></Grid>
-                <Grid item>
-                  <Grid container spacing={1} sx={{ mt:'4px' }}>
-                    <Grid item sx={{ ml: '4px', flexGrow: 1 }}>
-                      { (userCtx.user && recipe.user) && userCtx.user?.user.id === recipe.user?.id &&
-                      <Button {...buttonProps } onClick={confirmDialog.handleOpen} color='error' text='Delete' />
-                      }
-                    </Grid>
-                    <Grid item>
-                      { userCtx.user ?
-                        userCtx.user?.user?.likedRecipes?.includes(recipe.id) ?
-                          <Button { ...buttonProps } onClick={removeLike} text='Unlike' /> :
-                          <Button { ...buttonProps } onClick={addLike} text='like' />
-                        :
-                        <Button { ...buttonProps } disabled={true} text='like' />
-                      }
+                  <Grid item>
+                    <RecipeInfo recipe={recipe} type='xs'/>
+                  </Grid>
+                  <Grid item className={classes.ingredients}>
+                    <RecipeIngredients ingredients={recipe.ingredients} />
+                  </Grid>
+                  <Grid item>
+                    <RecipeInstructions instructions={recipe.steps} />
+                  </Grid>
+                  <Grid item sx={{ height: '40px' }}></Grid>
+                  <Grid item>
+                    <Grid container spacing={1} sx={{ mt:'4px' }}>
+                      <Grid item sx={{ ml: '4px', flexGrow: 1 }}>
+                        { (userCtx.user && recipe.user) && userCtx.user?.user.id === recipe.user?.id &&
+                        <>
+                          <Button {...buttonProps } onClick={confirmDialog.handleOpen} color='error' text='Delete' />
+                          <Button {...buttonProps} sx={{ ml: '0.6em' }} onClick={() => setEditMode(true)} text='Edit' />
+                        </>
+                        }
+                      </Grid>
+                      <Grid item>
+                        { userCtx.user ?
+                          userCtx.user?.user?.likedRecipes?.includes(recipe.id) ?
+                            <Button { ...buttonProps } onClick={removeLike} text='Unlike' /> :
+                            <Button { ...buttonProps } onClick={addLike} text='like' />
+                          :
+                          <Button { ...buttonProps } sx={{ minWidth: '75px' }} disabled={true} text='like' />
+                        }
+                      </Grid>
 
                     </Grid>
-                    <Grid item sx={{ mr: '4px' }}>
-                      <Button { ...buttonProps } disabled={userCtx.user ? false : true} onClick={commentDialog.handleOpen} text='Comment' />
+                    <Grid container sx={{ display: 'flex', justifyContent: 'end', mt: '2em' }}>
+                      <Grid item>
+                        <Button {...buttonProps} disabled={userCtx.user ? false : true} onClick={commentDialog.handleOpen} text='Comment' />
+                      </Grid>
                     </Grid>
                   </Grid>
-                </Grid>
 
-                <RecipeComments comments={recipe.comments} recipeCtx={recipeCtx} />
-
-              </CardContent>
-              <ConfirmDialog open={confirmDialog.open} handleClose={confirmDialog.handleClose} action={deleteRecipe} />
-              <CommentDialog
-                open={commentDialog.open}
-                values={values}
-                handleInputChange={handleCommentDialogChange}
-                handleClose={commentDialog.handleClose}
-                commentDialogError={commentDialogError}
-                action={addComment}
-                title='Add comment'
-                submitBtnText='Add' />
-            </Card>
-            <BackToTop />
-          </Grid>
+                  <RecipeComments comments={recipe.comments} recipeCtx={recipeCtx} />
+                </CardContent>
+                <ConfirmDialog open={confirmDialog.open} handleClose={confirmDialog.handleClose} action={deleteRecipe} />
+                <CommentDialog
+                  open={commentDialog.open}
+                  values={values}
+                  handleInputChange={handleCommentDialogChange}
+                  handleClose={commentDialog.handleClose}
+                  commentDialogError={commentDialogError}
+                  action={addComment}
+                  title='Add comment'
+                  submitBtnText='Add' />
+              </Card>
+              <BackToTop />
+            </Grid>
+            :
+            <Grid container sx={{ mt: '2em', display: 'flex', justifyContent: 'center' }}>
+              <Grid item>
+                <EditRecipe close={handleEditClose} originalRecipe={recipe}/>
+              </Grid>
+            </Grid>
           :
           <RecipeErrorBox message='Recipe not found' />
       }

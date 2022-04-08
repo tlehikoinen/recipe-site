@@ -25,7 +25,6 @@ const index = () => {
   useEffect(() => {
     window.localStorage.removeItem('userJson')
     setUser(null)
-    console.log('userJson was deleted')
   }, [])
 
   return (
@@ -44,14 +43,6 @@ const index = () => {
       <Grid item xs={3}>
         <Typography variant="subtitle">Redirecting in {timeDelay} seconds</Typography>
       </Grid>
-      {/* <Grid item xs={3}>
-        <img
-          height="400"
-          width="400"
-          src={'https://evidensia.fi/wp-content/uploads/2020/06/kissa-kesa%CC%88-evidensia-scaled.jpg'}
-          alt="loading...">
-        </img>
-      </Grid> */}
     </Grid>
   )
 }

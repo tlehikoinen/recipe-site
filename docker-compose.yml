@@ -12,6 +12,7 @@ services:
     volumes:
       - ./.eslintrc.json:/.eslintrc.json
       - ./backend:/backend
+      - ./backend/node_modules
     depends_on:
       - mongo
     environment:

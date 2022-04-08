@@ -40,6 +40,16 @@ const deleteRecipe = async (id) => {
   return response
 }
 
+const editRecipe = async (id, recipe) => {
+  const config = { headers: { Authorization : token } }
+  const response = await axios.put(`${baseUrl}/recipes/${id}`, recipe, config)
+    .catch((error) => {
+      const { response } = error
+      return response
+    })
+  return response
+}
+
 const getRecipe = async (id) => {
   const response = await axios.get(`${baseUrl}/recipes/${id}`)
     .catch((error) => {
@@ -94,4 +104,9 @@ const removeLike = async (id) => {
 }
 
 
-export default { addLike, addRecipe, deleteComment, deleteRecipe, getRecipe, getRecipes, postAvatar, postComment, removeLike, setToken }
+export default {
+  addRecipe,  deleteRecipe, editRecipe, getRecipe, getRecipes,
+  postComment, deleteComment,
+  addLike, removeLike,
+  postAvatar,
+  setToken }

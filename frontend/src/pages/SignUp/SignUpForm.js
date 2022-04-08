@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Grid, Typography } from '@mui/material'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
@@ -47,11 +48,13 @@ const generateFieldErrorMessage = (error) => {
 
 const SignUpForm = () => {
 
+  const history = useNavigate()
+
   const formik = useFormik({
     initialValues: {
-      email: 'akuankka@gmail.com',
-      username: 'tomppa',
-      password: 'salasana'
+      email: '',
+      username: '',
+      password: ''
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -61,7 +64,8 @@ const SignUpForm = () => {
         formik.setErrors({ [field]: message } )
       }
       else {
-        alert(`User created successfully ${JSON.stringify(res.data, null, 2)}`)
+        alert(`User created successfully\nSave credentials as they can't be restored\n${JSON.stringify(res.data, null, 2)}`)
+        history('/login')
       }
     },
   })
@@ -105,7 +109,7 @@ const SignUpForm = () => {
             helperText={formik.touched.password && formik.errors.password} />
         </Grid>
         <Grid item>
-          <Controls.Button text="Create" type="submit" size="small" />
+          <Controls.Button text="Create" type="submit" />
         </Grid>
       </Grid>
 

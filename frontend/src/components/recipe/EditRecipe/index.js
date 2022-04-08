@@ -1,65 +1,113 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Box, Card, CardContent, CardHeader, CardMedia, Grid, Typography } from '@mui/material'
 import { useForm } from '../../useForm'
 import useStyles from './styles.js'
 import Controls from '../../controls/Controls'
+import { generateFoodAvatar } from '../recipeHelpers'
 import IngredientInput from '../../InputTable/IngredientInput'
 import StepInput from '../../InputTable/StepInput'
 import ImageLoader from '../../ImageLoader'
 import recipeServices from '../../../services/recipeServices'
 import Contexts from '../../../contexts'
-import { allImages, courseOptions, difficultyOptions, recipeValidationData, timeScaleValues } from '../recipeHelpers'
 
-const index = ({ close }) => {
+const difficultyOptions = [
+  { id: 1, title: 'Easy' },
+  { id: 2, title: 'Medium' },
+  { id: 3, title: 'Hard' }
+]
+const courseOptions = [
+  { id: 1, title: 'Savory' },
+  { id: 2, title: 'Vegetarian' },
+  { id: 3, title: 'Sweet' }
+]
+
+export const timeScaleValues = [
+  '15 min', '30 min', '45 min', '1 h', '1.5 h',
+  '2 h', '2.5 h', '3 h', '4 h', '5 h',
+  '6 h', '8 h', '10 h', '12 h', '16 h',
+  '1 d', '2 d', '3 d', '4 d', '5 d',
+  '1 week', '2 week', '3 week', '1 month'
+]
+
+const validationData = {
+  title: {
+    error: false,
+    errorMsg: 'Name is required'
+  },
+  description: {
+    error: false,
+    errorMsg: 'Description is required'
+  },
+  course: {
+    error: false,
+    errorMsg: 'Select course',
+  },
+  servings: {
+    error: false,
+    errorMsg: 'Amount of servings is required'
+  },
+  difficulty: {
+    error: false,
+    errorMsg: 'Select difficulty',
+  },
+}
+
+const index = ({ close, originalRecipe }) => {
   const classes = useStyles()
   const recipeCtx = useContext(Contexts.RecipeContext)
   const userCtx = useContext(Contexts.UserContext)
   const { file, setFile, inputFile, onChangeFile, avatar, setAvatar } = ImageLoader()
+  const [imageChanged, setImageChanged] = useState(false)
   const { values, setValues, handleInputChange, resetValues, validation, setValidation } = useForm({
-    title: '',
-    description: '',
-    course: '',
-    difficulty: '',
-    ingredients: [],
-    timeEstimate: 3,
-    steps: [],
-    servings: ''
-  },
-  recipeValidationData)
+    title: originalRecipe.title,
+    description: originalRecipe.description,
+    course: originalRecipe.course,
+    difficulty: originalRecipe.difficulty,
+    ingredients: [...originalRecipe.ingredients],
+    timeEstimate: 3, // Convert to timescalevalues
+    steps: [...originalRecipe.steps],
+    servings: originalRecipe.servings
+  }, validationData)
+
+  useEffect(() => {
+    if (originalRecipe.avatar.key !== '') {
+      setAvatar(`/api/recipes/avatars/${originalRecipe.id}`)
+    } else {
+      setAvatar(generateFoodAvatar(originalRecipe.course))
+    }
+    window.scrollTo(0, 0)
+  }, [])
 
   const submitValues = async () => {
-    let imgError = false
+    let imgFailed= false
     // Convert timeEstimate to { value, unit } form
     const [value, unit] = timeScaleValues[values.timeEstimate].split(' ')
     const convertedValues = { ...values, timeEstimate: { value: value, unit: unit } }
-    const res = await recipeServices.addRecipe(convertedValues)
+    const res = await recipeServices.editRecipe(originalRecipe.id, convertedValues)
     if (res.status === 200) {
       // Image is loaded in its own request after first request with recipe data is done
-      if (file) {
+      if (file && imageChanged) {
         const imgRes = await recipeServices.postAvatar(res.data.id, file)
         if (imgRes.status !== 200) {
-          imgError = true
+          imgFailed = true
         } else {
           res.data = { ...res.data, avatar: imgRes.data.recipe.avatar }
         }
       }
       // Update contexts
-      const updatedRecipes = recipeCtx.recipes.concat(res.data)
-      recipeCtx.setRecipes(updatedRecipes)
-
       const prevUser = window.localStorage.getItem('userJson')
-      const newUser = { ...userCtx.user.user, recipes: userCtx.user.user.recipes.concat(res.data) }
-
+      const newUser = { ...userCtx.user.user, recipes: userCtx.user.user.recipes.map(r => r.id === res.data.id ? res.data : r) }
       const updatedUser = { ...JSON.parse(prevUser), user: (newUser) }
       window.localStorage.setItem('userJson', JSON.stringify(updatedUser))
-
-      //userCtx.setUser({ ...userCtx.user, user: newUser })
       userCtx.setUser(updatedUser)
-      if (imgError) {
+
+      const updatedRecipes = recipeCtx.recipes.map(r => r.id === res.data.id ? res.data : r)
+      recipeCtx.setRecipes(updatedRecipes)
+
+      if (imgFailed) {
         alert('Image was not supported')
       }
       close()
-
 
     } else {
       // Error data for validation is in form: '{Schema} validation failed: error message for `field`, error message for `field2`...
@@ -67,11 +115,11 @@ const index = ({ close }) => {
       if (res?.data?.error.startsWith('Recipe validation failed:')) {
         const errorFields = res.data.error
           .split(',')
-          .map(f => f.slice(f.indexOf('`') +1, f.lastIndexOf('`')).toLowerCase())
+          .map(f => f.slice(f.indexOf('`') + 1, f.lastIndexOf('`')).toLowerCase())
 
         // Make new validationData object, changing error property to match response msg
-        var newValidationData = Object.keys(recipeValidationData).reduce((acc, elem) => {
-          acc[elem] = errorFields.includes(elem.toString().toLowerCase()) ? { ...recipeValidationData[elem], error: true } : recipeValidationData[elem]
+        var newValidationData = Object.keys(validationData).reduce((acc, elem) => {
+          acc[elem] = errorFields.includes(elem.toString().toLowerCase()) ? { ...validationData[elem], error: true } : validationData[elem]
           return acc
         }, {})
 
@@ -83,15 +131,19 @@ const index = ({ close }) => {
   const resetFields = () => {
     resetValues()
     setFile(null)
-    setAvatar(allImages.saltys[0])
+    setAvatar(generateFoodAvatar(originalRecipe.course))
+  }
+
+  const handleImageChange = (e) => {
+    setImageChanged(true)
+    onChangeFile(e)
   }
 
   return (
     <Grid container direction='column' className={classes.root}>
       <Card className={classes.card}>
         <CardContent>
-          <CardHeader sx={{ textAlign: 'center' }} titleTypographyProps={{ variant: 'h4' }} title="New recipe" />
-
+          <CardHeader sx={{ textAlign: 'center' }} titleTypographyProps={{ variant: 'h4' }} title="Edit recipe" />
           <Grid item xs={12}>
             <Grid container className='centered'>
               <Grid item >
@@ -100,12 +152,12 @@ const index = ({ close }) => {
                   ref={inputFile}
                   type="file"
                   accept="image"
-                  onChange={(e) => onChangeFile(e)}
+                  onChange={(e) => handleImageChange(e)}
                 />
                 <CardMedia
                   onClick={() => inputFile.current.click()}
                   component='img'
-                  src={avatar || allImages.saltys[0]} />
+                  src={avatar} />
               </Grid>
               <Grid item>
                 <Box display='flex' flexDirection={'column'}>
@@ -203,7 +255,7 @@ const index = ({ close }) => {
                 <Controls.Button sx={{ marginLeft: '10px' }} size='small' text='Cancel' onClick={close} />
               </Grid>
               <Grid item xs={4}>
-                <Controls.Button onClick={submitValues} className='submit-button' size='small' text='Add recipe' />
+                <Controls.Button onClick={submitValues} className='submit-button' size='small' text='Edit' />
               </Grid>
             </Grid>
 

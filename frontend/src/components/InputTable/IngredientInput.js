@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -10,6 +10,7 @@ import Controls from '../controls/Controls'
 import { Grid } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { makeStyles } from '@mui/styles'
+import { findBiggestIdInField } from './inputHelpers'
 
 const unitOptions = [
   { id: 1, title: 'tsp.' },
@@ -53,8 +54,12 @@ const useStyles = makeStyles(theme => ({
 
 const IngredientInput = ({ handleInputChange, values, setValues }) => {
 
-  const [biggestRow, setBiggestRow] = useState(1)
+  const [biggestRow, setBiggestRow] = useState(null)
   const classes = useStyles()
+
+  useEffect(() => {
+    setBiggestRow(findBiggestIdInField(values, 'ingredients') +1)
+  }, [])
 
   const emptyIngredient = { id: biggestRow, ingredient: '', amount: '', unit: '' }
 
@@ -65,7 +70,7 @@ const IngredientInput = ({ handleInputChange, values, setValues }) => {
   }
 
   const deleteRow = (row) => {
-    const newRows = values.ingredients.filter(r => r.id.toString() !== row.id.toString())
+    const newRows = values.ingredients.filter(r => r.id?.toString() !== row.id?.toString())
     setValues({ ...values, ingredients: newRows })
   }
 

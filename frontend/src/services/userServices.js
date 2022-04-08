@@ -105,17 +105,13 @@ const updateTheme = async (id, theme) => {
   return response
 }
 
-const postMessage = async (userId, message) => {
-  console.log(`Posting message to ${userId} with message ${message}`)
-  // const config = { headers: { Authorization : token } }
-  // const response = await axios.post(`${baseUrl}/users/${userId}/messages`, { message }, config)
-  //   .catch((error) => {
-  //     const { response } = error
-  //     return response
-  //   })
-  // return response
-}
-
-export default { addFollow, deleteFollow, deleteUserWithConfirmation, getAvatar, getUser, getUsers, login, postAvatar, postMessage, setToken, signUp, updateDescription, updateTheme }
+export default {
+  getUser, getUsers,
+  login, signUp,
+  addFollow, deleteFollow,
+  updateDescription, updateTheme,
+  getAvatar, postAvatar,
+  deleteUserWithConfirmation,
+  setToken, }
 
 

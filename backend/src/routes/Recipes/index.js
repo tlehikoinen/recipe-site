@@ -113,7 +113,6 @@ router.put('/:id/likes', middleware.userExtractor, async (req, res, next) => {
     const recipeObjectId = new ObjectId(req.params.id)
     if (userInDb.likedRecipes.includes(recipeObjectId)) {
       const error = { code: 400, message: 'User had already given like to this recipe' }
-      console.log('already liked')
       return next(error)
     }
 
@@ -160,7 +159,6 @@ router.delete('/:id/likes', middleware.userExtractor, async (req, res, next) => 
 router.get('/:id/likes', async (req, res, next) => {
   try {
     const likesWithUsers = await Recipe.findById(req.params.id).populate('likers')
-    console.log(likesWithUsers)
     res.status(200).json(likesWithUsers)
   } catch(e) {
     next(e)
@@ -177,6 +175,17 @@ router.get('/:id', async (req, res, next) => {
     } else {
       return res.status(200).json(recipe)
     }
+  } catch(e) {
+    next(e)
+  }
+})
+
+router.put('/:id', middleware.userExtractor, async (req, res, next) => {
+  try {
+    const updatedRecipe = await Recipe.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('user').populate('comments')
+    return res.status(200).json(updatedRecipe)
+
+
   } catch(e) {
     next(e)
   }
@@ -199,15 +208,10 @@ router.delete('/:id', middleware.userExtractor, async (req, res, next) => {
       const newUser = await User.findByIdAndUpdate(userInDb.id,
         { '$pull': { 'recipes': recipeInDb.id } }, { new: true })
 
-
-      console.log(newUser)
-
       res.status(202).json({ user: newUser } )
 
-      console.log('delete allowed')
     } else {
       res.status(401).send('delete not allowed')
-      console.log('delete not allowed')
     }
 
   } catch(e) {

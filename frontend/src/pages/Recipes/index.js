@@ -11,7 +11,7 @@ import { useForm } from '../../components/useForm'
 import Contexts from '../../contexts'
 import Controls from '../../components/controls/Controls'
 import NewRecipe from '../../components/recipe/NewRecipe'
-import { timeScaleValues } from '../../components/recipe/NewRecipe'
+import { timeScaleValues } from '../../components/recipe/recipeHelpers'
 
 // A custom hook that builds on useLocation to parse
 // the query string for you.

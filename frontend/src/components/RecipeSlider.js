@@ -1,16 +1,16 @@
-/* eslint-disable */
 import React, { useState } from 'react'
-import { Grid, Typography } from '@mui/material'
+import { Grid } from '@mui/material'
 import { makeStyles } from '@mui/styles'
-import SimpleRecipe from './recipe/SimpleRecipe'
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import RecipeWithImage from './recipe/RecipeWithImage'
+import ArrowRightIcon from '@mui/icons-material/ArrowRight'
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft'
 import Fab from '@mui/material/Fab'
 
 const useStyles = makeStyles(() => ({
   root: {
     justifyContent: 'center',
     marginTop: '1em',
+    flexWrap: 'wrap',
     '& .fab': {
       display: 'flex',
       alignItems: 'center',
@@ -21,7 +21,7 @@ const useStyles = makeStyles(() => ({
   }
 }))
 
-const RecipeSlider = ({ recipes, text }) => {
+const RecipeSlider = ({ recipes }) => {
   const classes = useStyles()
   const [current, setCurrent] = useState(0) // Start with the index 0
   return (
@@ -32,7 +32,7 @@ const RecipeSlider = ({ recipes, text }) => {
         </Fab>
       </Grid>
       <Grid item>
-        <SimpleRecipe recipe={recipes[current]} />
+        <RecipeWithImage recipe={recipes[current]} />
       </Grid>
       <Grid item className='fab'>
         <Fab color='primary' sx={{ ml: '2em' }} onClick={() => setCurrent(current === recipes.length-1 ? 0 : current +1)}>

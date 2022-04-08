@@ -30,6 +30,14 @@ const useStyles = makeStyles((theme) => ({
         marginRight: '-400px',
       }
     },
+    '& .centered': {
+      display: 'flex',
+      justifyContent: 'space-evenly',
+      '& .MuiFormControl-root': {
+        marginTop: '10px',
+        minWidth: '90px'
+      }
+    },
   },
   header: {
     textAlign: 'center',
@@ -38,6 +46,11 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
     textAlign: 'center',
   },
+  newRecipe: {
+    display: 'flex',
+    justifyContent: 'center'
+  }
+
 
 
 

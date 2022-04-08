@@ -12,15 +12,12 @@ import SignUp from './pages/SignUp'
 import UserProfiles from './pages/UserProfiles'
 import UserProfile from './pages/UserProfile'
 import { Container } from '@material-ui/core'
-
 import Unknown from './components/Unknown'
-import {  Footer } from './components/common/'
 import NavBar from './components/NavBar'
 import './App.css'
 
 import Contexts from './contexts'
 
-/* eslint-disable-next-line */
 import { DarkTheme, LightTheme } from './styles/themes'
 import { ThemeProvider } from '@mui/material'
 import { CssBaseline } from '@mui/material'
@@ -68,7 +65,6 @@ const App = () => {
     const userJson = window.localStorage.getItem('userJson')
     if (userJson) {
       const parsedUser = JSON.parse(userJson)
-      console.log(Object.entries(parsedUser))
       if (parsedUser) {
         themeCtx.changeTheme(parsedUser.user.theme)
         UserServices.setToken(parsedUser.token)
@@ -114,7 +110,6 @@ const App = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/*" element={<Unknown />} />
               </Routes>
-              <Footer />
             </Container>
           </ThemeProvider>
         </Contexts.RecipeContext.Provider>

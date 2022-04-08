@@ -23,7 +23,6 @@ const index = () => {
   const classes = useStyles()
 
   const themeChange = async (e) => {
-    console.log('theme change')
     const { value } = e.target
 
     if (value === themeOptions[infoCtx?.theme]) {   // If theme equals clicked, return
@@ -34,7 +33,6 @@ const index = () => {
       window.localStorage.setItem('theme', updatedTheme)
       infoCtx.changeTheme(updatedTheme)
       if (userCtx.user && updatedTheme) {
-        console.log('updating theme')
         updateThemeInDb(updatedTheme)
       }
     }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -10,6 +10,7 @@ import { makeStyles } from '@mui/styles'
 import Button from '../controls/Button'
 import DeleteIcon from '@mui/icons-material/Delete'
 import Controls from '../controls/Controls'
+import { findBiggestIdInField } from './inputHelpers'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,8 +36,12 @@ const useStyles = makeStyles(theme => ({
 
 const StepInput = ({ handleInputChange, values, setValues }) => {
 
-  const [biggestRow, setBiggestRow] = useState(1)
+  const [biggestRow, setBiggestRow] = useState(null)
   const classes = useStyles()
+
+  useEffect(() => {
+    setBiggestRow(findBiggestIdInField(values, 'steps') +1)
+  }, [])
 
   const emptyStep = { id: biggestRow, instruction: '' }
 

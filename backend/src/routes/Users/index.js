@@ -64,7 +64,6 @@ router.post('/avatars/:id', middleware.userExtractor, async (req, res, next) => 
     return next(error)
   } else {
     const previousAvatar = userInDb.avatar.key
-    console.log(previousAvatar)
 
     upload(req,res, async (err) => {
       if(err) {
@@ -74,8 +73,6 @@ router.post('/avatars/:id', middleware.userExtractor, async (req, res, next) => 
       else {
         try {
           const s3_res = await uploadFile(req.file)   // Upload file to S3
-          console.log('S3 Response')
-          console.log(s3_res)
           const updatedUser = await User.findByIdAndUpdate(req.params.id, { avatar: { key: s3_res.Key, location: s3_res.Location } }, { new: true })
           res.status(200).send({ user: updatedUser })
         }
@@ -197,8 +194,6 @@ router.delete('/:id', middleware.userExtractor, async (req, res, next) => {
 router.post('/confirmAndDelete', middleware.userExtractor, async (req, res, next) => {
   try {
     const userInDb = await User.findById(req.user.id).select('+hashPassword')
-    // console.log('deleting')
-    // console.log(userInDb)
     const correctPassword = userInDb === null
       ? false
       : await bcrypt.compare(req.body.password, userInDb.hashPassword)

@@ -223,7 +223,6 @@ router.delete('/:id', middleware.userExtractor, async (req, res, next) => {
 router.get('/', async (req, res, next) => {
   try {
     const recipe = await Recipe.find().populate('user').populate('comments')
-    logger.info(recipe)
     return res.status(200).json(recipe)
   } catch(e) {
     return next(e)
@@ -247,7 +246,8 @@ router.post('/', middleware.userExtractor, async (req, res, next) => {
         ingredients: req.body.ingredients,
         steps: req.body.steps,
         difficulty: req.body.difficulty,
-        timeEstimate: req.body.timeEstimate
+        timeEstimate: req.body.timeEstimate,
+        servings: req.body.servings
       })
 
       const savedRecipe = await recipe.save()
@@ -296,8 +296,6 @@ router.delete('/:id/comments', middleware.userExtractor, async (req, res, next) 
     // Delete comment reference from recipe
     const newRecipe = await Recipe.findByIdAndUpdate(commentInDb.recipe.id,
       { '$pull': { 'comments': req.params.id } }).populate('user').populate('comments')
-
-    console.log(newRecipe)
 
     res.status(202).json({ recipe: newRecipe })
   } catch(e) {

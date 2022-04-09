@@ -8,7 +8,7 @@ const RecipeSchema = new Schema({
   },
   title: {
     type: String,
-    required: true
+    required: true,
   },
   description: {
     type: String,
@@ -54,7 +54,9 @@ const RecipeSchema = new Schema({
   },
   servings: {
     type: Number,
-    required: false
+    required: true,
+    min: 1,
+    max: 258
   },
   comments: [
     {

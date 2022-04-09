@@ -23,7 +23,7 @@ const index = ({ close }) => {
     ingredients: [],
     timeEstimate: 3,
     steps: [],
-    servings: ''
+    servings: 1
   },
   recipeValidationData)
 
@@ -149,7 +149,8 @@ const index = ({ close }) => {
               label='Servings'
               name='servings'
               value={values.servings}
-              onChange={handleInputChange} />
+              onChange={handleInputChange}
+              InputProps={{ inputProps: { min: 1, max: 255 } }}/>
 
             <Controls.Select
               showNone={false}

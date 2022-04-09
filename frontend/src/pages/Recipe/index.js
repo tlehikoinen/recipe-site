@@ -171,7 +171,7 @@ const index = () => {
                     <RecipeInfo recipe={recipe} type='xs'/>
                   </Grid>
                   <Grid item className={classes.ingredients}>
-                    <RecipeIngredients ingredients={recipe.ingredients} />
+                    <RecipeIngredients ingredients={recipe.ingredients} servings={recipe.servings} />
                   </Grid>
                   <Grid item>
                     <RecipeInstructions instructions={recipe.steps} />

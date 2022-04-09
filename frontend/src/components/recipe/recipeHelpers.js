@@ -63,7 +63,7 @@ export const recipeValidationData = {
   },
   servings: {
     error: false,
-    errorMsg: 'Amount of servings is required'
+    errorMsg: 'Amount of servings must be more than 1'
   },
   difficulty: {
     error: false,

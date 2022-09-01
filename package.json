@@ -9,7 +9,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint:frontend": "cd frontend && npm run lint",
     "lint:backend": "cd backend && npm run lint",
-    "lint": "eslint backend frontend"
+    "lint": "eslint backend frontend",
+    "build": "cd backend && npm run build:ui",
+    "start": "cd backend && npm start"
   },
   "author": "",
   "license": "ISC",

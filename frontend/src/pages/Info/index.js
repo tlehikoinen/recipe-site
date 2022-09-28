@@ -26,7 +26,7 @@ const Info = () => {
               Recipe site built with MERN-stack<br/><br />
               Contact:<br/>
               {/* eslint-disable-next-line react/jsx-no-target-blank */}
-              <a target='_blank' href='https://github.com/yellowpasta' rel="noreferrer">github.com/yellowpasta</a>
+              <a target='_blank' href='https://github.com/tlehikoinen' rel="noreferrer">github.com/tlehikoinen</a>
             </Typography>
           </CardContent>
         </Card>

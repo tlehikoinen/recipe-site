@@ -7,7 +7,7 @@ import { makeStyles } from '@mui/styles'
 const useStyles = makeStyles(() => ({
   root: {
     '&:hover': {
-      boxShadow: '1px 2px 1px 2px'
+      boxShadow: '0px 0px 8px 2px'
     }
   }
 }))

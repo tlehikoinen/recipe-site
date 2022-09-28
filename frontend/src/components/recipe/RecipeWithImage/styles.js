@@ -4,7 +4,7 @@ const recipeStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(4),
     justifyContent: 'center',
     '& .MuiPaper-root:hover': {
-      boxShadow: '2px 4px 3px 5px'
+      boxShadow: '0px 0px 8px 2px'
     },
   },
   card: {

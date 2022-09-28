@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
       width: '8em',
       height: '8em',
       '&:hover': {
-        boxShadow: '2px 4px 3px 5px'
+        boxShadow: '0px 0px 8px 2px'
       }
     },
     '& .centered': {

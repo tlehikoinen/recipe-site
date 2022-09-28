@@ -7,7 +7,7 @@ import ImageWithDialog from './images/ImageWithDialog'
 const useStyles = makeStyles((theme) => ({
   root: {
     '&:hover': {
-      boxShadow: '2px 4px 3px 5px !important'
+      boxShadow: '0px 0px 8px 2px !important'
     },
     width: '300px',
     height: '200px',

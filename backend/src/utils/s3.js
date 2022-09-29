@@ -12,11 +12,15 @@ const bucketName = process.env.S3_AVATAR_NAME
 const region = process.env.S3_AVATAR_REGION
 const accessKeyId = process.env.S3_AVATAR_ACCESS_KEY
 const secretAccessKey = process.env.S3_AVATAR_SECRET_KEY
+const endpoint = process.env.S3_ENDPOINT || undefined
+const s3ForcePathStyle = process.env.S3_ENDPOINT !== undefined // Endpoint is only specified when using localstack in docker
 
 const s3 = new S3({
   region,
   accessKeyId,
-  secretAccessKey
+  secretAccessKey,
+  endpoint,
+  s3ForcePathStyle,
 })
 
 // deletes file from S3
